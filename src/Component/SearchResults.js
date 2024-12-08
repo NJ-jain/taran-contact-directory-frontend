@@ -63,7 +63,7 @@ const SearchResults = () => {
             <input
                 type="text"
                 placeholder="Search"
-                className="input input-bordered w-24 md:w-auto"
+                className="input input-bordered lg:w-52 xl:w-52 2xl:w-52 md:w-auto w-[215px] "
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 onFocus={() => setIsInputFocused(true)}
