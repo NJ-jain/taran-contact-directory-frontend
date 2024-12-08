@@ -50,78 +50,38 @@ const Dashboard = () => {
          { error ? (
           <p>Error: {error.message || 'An error occurred'}</p>
         ) :  filteredMembers?.length > 0 ? (
-          <div className="overflow-x-auto">
-            <table className="table w-full">
-              {/* Table Head */}
-              <thead>
-                <tr>
-                  <th></th>
-                  <th>Name</th>
-                  <th>Phone Number</th>
-                  <th>Email</th>
-                  <th>Address</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              {/* Table Body */}
-              <tbody>
-                {filteredMembers?.map((member, index) => (
-                  <tr key={member._id}>
-                    <td>
-                      <label>
-                        <input type="checkbox" className="checkbox" />
-                      </label>
-                    </td>
-                    <td>
-                      <div className="flex items-center gap-3">
-                        <div className="avatar">
-                          <div className="mask mask-squircle h-12 w-12">
-                            <img
-                              src={member?.dp || '/path/to/placeholder.jpg'}
-                              alt={`${member.firstName} ${member.lastName}`}
-                              onError={(e) => {
-                                e.target.src = '/path/to/fallback-image.jpg';
-                              }}
-                              className="object-cover"
-                              onMouseEnter={(e) => handleMouseEnter(e, member)}
-                            // onMouseLeave={() => setHoveredImage('')} // Hide the image when the mouse leaves
-                            />
-                          </div>
-                        </div>
-                        <div>
-                          <div className="font-bold capitalize">
-                            {member.firstName} {member.lastName}
-                          </div>
-                        </div>
-                      </div>
-                    </td>
-                    <td>{member.phoneNumber}</td>
-                    <td>{member.email}</td>
-                    <td>{member.address}</td>
-                    <td>
-                      <button
-                        className="btn btn-primary btn-sm"
-                        onClick={() => handleDetailsClick(member._id)}
-                      >
-                        Details
-                      </button>
-                    </td>
-                  </tr>
+          <div className="">
+          <div className="">
+            <div className="py-10 border-blueGray-200 text-center">
+              <ul className="space-y-4">
+                {filteredMembers?.map((member) => (
+                  <li
+                    key={member._id}
+                    onClick={() => handleDetailsClick(member._id)}  
+                    className="flex items-center p-4 bg-white rounded-lg shadow hover:bg-blue-50 transition cursor-pointer"
+                  >
+                    <img
+                      className="w-12 h-12 rounded-full mr-4 border border-blueGray-200"
+                      src={member.dp || '/path/to/fallback-image.jpg'}
+                      alt={`${member.firstName} ${member.lastName}`}
+                      onError={(e) => {
+                        e.target.src = '/path/to/fallback-image.jpg';
+                      }}
+                    />
+                    <div className="text-left">
+                      <span className="block text-lg font-medium text-blueGray-700 capitalize">
+                        {member.firstName} {member.lastName}
+                      </span>
+                      <span className="block text-sm text-blueGray-500">
+                        {member.phoneNumber}
+                      </span>
+                    </div>
+                  </li>
                 ))}
-              </tbody>
-              {/* Table Footer */}
-              <tfoot>
-                <tr>
-                  <th></th>
-                  <th>Name</th>
-                  <th>Phone Number</th>
-                  <th>Email</th>
-                  <th>Address</th>
-                  <th>Actions</th>
-                </tr>
-              </tfoot>
-            </table>
-          </div> 
+              </ul>
+            </div>
+          </div>
+        </div>
         ) : (
           <h3 className='absolute ' style={{top: "50%", left : "50%" , transform : "translate(-50%, -50%)"}}>No data present</h3> 
         )}

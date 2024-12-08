@@ -63,14 +63,14 @@ const SearchResults = () => {
             <input
                 type="text"
                 placeholder="Search"
-                className="input input-bordered lg:w-52 xl:w-52 2xl:w-52 md:w-auto w-[215px] "
+                className="input input-bordered lg:w-52 xl:w-52 2xl:w-52 md:w-auto w-72 xs:w-[21rem] "
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 onFocus={() => setIsInputFocused(true)}
             />
             {isInputFocused && location.pathname !== '/' && members.length > 0 && (
-                <div className="absolute top-[50px] w-[215px] right-0 z-50 bg-white rounded-xl shadow-lg">
-                    <ul>
+                <div className="absolute top-[50px]  lg:w-52 xl:w-52 2xl:w-52 md:w-auto w-72 xs:w-[21rem] right-0 z-50 bg-white rounded-xl shadow-lg">
+                    <ul className='md:w-56'>
                         {members.slice(0, 10).map((data) => (
                             <li
                                 key={data.id}
