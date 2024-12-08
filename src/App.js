@@ -13,20 +13,10 @@ function App() {
     <Router>
       <div className=" w=full relative overflow-hidden">
         <Routes>
+          <Route path="/" index element={<Dashboard />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
-          <Route path="/" element={<Dashboard />} />
           <Route path='/details/:id' element={<Details />} />
-          {/* <Route path="/dashboard" element={<ProtectedRoute element={Dashboard} />} /> */}
-          {/* <Route
-            exact
-            path="/dashboard" // Define the route for the "aftersignup" page
-            element={
-              <ProtectedRoute>
-                <Dashboard />
-              </ProtectedRoute>
-            } // Render the "aftersignup" page component
-          /> */}
           <Route
             exact
             path="/profile" // Define the route for the "aftersignup" page
@@ -36,9 +26,6 @@ function App() {
               </ProtectedRoute>
             } // Render the "aftersignup" page component
           />
-          {/* <Route path="/profile" element={<ProtectedRoute element={Profile} />} /> */}
-          <Route path='/props' element={<Profile />} />
-          {/* Add more routes here if needed */}
         </Routes>
       </div>
     </Router>

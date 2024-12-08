@@ -1,3 +1,4 @@
+import axios from 'axios';
 import apiInstance from './axiosInstance';
 
 const API_URL = 'http://localhost:5000/api/members';
@@ -12,12 +13,12 @@ export const createMember = async (memberData) => {
 };
 
 export const getAllMembers = async () => {
-    const response = await apiInstance.get(API_URL);
+    const response = await axios.get(API_URL);
     return response.data;
 };
 
 export const getMember = async (memberId) => {
-    const response = await apiInstance.get(`${API_URL}/${memberId}`);
+    const response = await axios.get(`${API_URL}/${memberId}`);
     return response.data;
 };
 
@@ -31,6 +32,6 @@ export const updateMember = async (memberId, memberData) => {
 };
 
 export const searchMembers = async (searchQuery) => {
-    const response = await apiInstance.get(`${API_URL}/search?q=${searchQuery}`);
+    const response = await axios.get(`${API_URL}/search?q=${searchQuery}`);
     return response.data;
 };

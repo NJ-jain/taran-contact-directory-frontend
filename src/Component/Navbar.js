@@ -11,7 +11,7 @@ const Navbar = () => {
 
     
     useEffect(() => {
-        if(!userData) dispatch(getUserThunk());
+        if(!userData && localStorage.getItem('authorization') ) dispatch(getUserThunk());
     }, [dispatch]);
     
 
