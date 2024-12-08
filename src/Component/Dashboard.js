@@ -40,7 +40,7 @@ const Dashboard = () => {
   return (
     <>
       <Navbar />
-      <div className="overflow-x-auto p-4">
+      <div className="overflow-x-auto p-4 min-w-[100vw] min-h-[100vh] ">
 
       {loading && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-20">
