@@ -123,7 +123,7 @@ const Dashboard = () => {
             </table>
           </div> 
         ) : (
-          <h3 className='absolute ' style={{top: "50%", left : "50%" , transform : "translate[-50%, -50%]"}}>No data present</h3> 
+          <h3 className='absolute ' style={{top: "50%", left : "50%" , transform : "translate(-50%, -50%)"}}>No data present</h3> 
         )}
       </div>
       {hoveredImage && (
