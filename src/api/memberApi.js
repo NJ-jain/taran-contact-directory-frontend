@@ -1,7 +1,7 @@
 import axios from 'axios';
 import apiInstance from './axiosInstance';
 
-const API_URL = 'http://localhost:5000/api/members';
+const API_URL = `${process.env.REACT_APP_BACKEND_URL}/members`;
 
 export const createMember = async (memberData) => {
     const response = await apiInstance.post(API_URL, memberData, {

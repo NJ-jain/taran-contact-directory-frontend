@@ -1,7 +1,9 @@
 import axios from 'axios';
 
+const BASE_URL = `${process.env.REACT_APP_BACKEND_URL}/auth`;
+
 export const registerUser = async (userData) => {
-    const response = await axios.post('http://localhost:5000/api/auth/register', userData, {
+    const response = await axios.post(`${BASE_URL}/register`, userData, {
         headers: {
             'Content-Type': 'application/json'
         }
@@ -11,7 +13,7 @@ export const registerUser = async (userData) => {
 
 // New loginUser function
 export const loginUser = async (userData) => {
-    const response = await axios.post('http://localhost:5000/api/auth/login', userData, {
+    const response = await axios.post(`${BASE_URL}/login`, userData, {
         headers: {
             'Content-Type': 'application/json'
         }
