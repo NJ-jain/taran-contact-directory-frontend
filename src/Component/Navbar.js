@@ -18,17 +18,17 @@ const Navbar = () => {
 
     return (
         <nav className="bg-white border-gray-200 dark:bg-gray-900">
-            <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
+            <div className="flex flex-wrap items-center justify-between mx-auto p-4">
                 {/* Logo and Title */}
                 <a href="/" className="flex items-center space-x-3 rtl:space-x-reverse">
-                    <span style={{fontSize: "x-large"}}>☎️</span>
+                    <span style={{ fontSize: "x-large" }}>☎️</span>
                     <span className="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">
                         TCD
                     </span>
                 </a>
 
                 {/* Navbar right items: Search and User Authentication */}
-                <div className="flex md:order-2">
+                <div className="flex ">
                     {/* Hamburger Icon for Mobile */}
                     <button
                         onClick={() => setMenuOpen(!menuOpen)} // Toggle menu visibility
@@ -55,9 +55,9 @@ const Navbar = () => {
                     </button>
 
                     {/* Search for larger screens */}
-                    <div className="relative hidden md:block">
+                    {/* <div className="relative hidden md:block">
                         <SearchResults />
-                    </div>
+                    </div> */}
                 </div>
 
                 {/* Dropdown Menu for Mobile */}
@@ -66,45 +66,39 @@ const Navbar = () => {
                         className="absolute top-16 left-0 w-full bg-white border border-gray-100 rounded-lg shadow-lg p-4 md:hidden z-50"
                         id="navbar-search"
                     >
-                        <div className="flex items-center mb-4">
-                            <SearchResults />
-                        </div>
                         <ul className="flex flex-col space-y-4">
                             {!localStorage.getItem('authorization') ? (
                                 <li>
-                                    <a
+                                    <button
                                         onClick={() => {
                                             navigate('/login');
                                         }}
-                                        href="#"
-                                        className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100"
+                                        className="btn btn-block"
                                     >
                                         Login
-                                    </a>
+                                    </button>
                                 </li>
                             ) : (
                                 <>
 
                                     <li>
-                                        <a
+                                        <button
                                             onClick={() => navigate('/profile')}
-                                            href="#"
-                                            className="block py-2 px-3 text-white  rounded"
+                                            className="btn btn-block"
                                         >
                                             Profile
-                                        </a>
+                                        </button>
                                     </li>
                                     <li>
-                                        <a
+                                        <button
                                             onClick={() => {
                                                 localStorage.clear();
                                                 navigate('/login');
                                             }}
-                                            href="#"
-                                            className="block py-2 px-3 text-white  rounded"
+                                            className="btn btn-block"
                                         >
                                             Logout
-                                        </a>
+                                        </button>
                                     </li>
                                 </>
                             )}
@@ -119,42 +113,48 @@ const Navbar = () => {
                 >
                     <ul className="flex flex-col p-4 md:p-0 mt-4 font-medium border border-gray-100 rounded-lg bg-gray-50 md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0 md:bg-white dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700">
                         {!localStorage.getItem('authorization') ? (
-                            <li>
-                                <a
-                                    onClick={() => {
-                                        navigate('/login');
-                                    }}
-                                    href="#"
-                                    className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
-                                >
-                                    Login
-                                </a>
-                            </li>
-                        ) : (
-                            <>
+                            <div className='flex justify-center items-center gap-8'>
                                 <li>
-                                    <a
+                                    <SearchResults />
+                                </li>
+                                <li>
+                                    <button
+                                        onClick={() => {
+                                            navigate('/login');
+                                        }}
+                                        // href="#"
+                                        className="btn"
+                                    >
+                                        Login
+                                    </button>
+                                </li>
+                            </div>
+                        ) : (
+                            <div className='flex items-center justify-center gap-8'>
+                                <li>
+                                    <SearchResults />
+
+                                </li>
+                                <li>
+                                    <button
                                         onClick={() => navigate('/profile')}
-                                        href="#"
-                                        className="block py-2 px-3 text-white  rounded md:bg-transparent md:text-blue-700 md:p-0 md:dark:text-blue-500"
+                                        className="btn "
                                         aria-current="page"
                                     >
                                         Profile
-                                    </a>
+                                    </button>
                                 </li>
                                 <li>
-                                    <a
+                                    <button
                                         onClick={() => {
                                             localStorage.clear();
                                             navigate('/login');
                                         }}
-                                        href="#"
-                                        className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
-                                    >
+                                        className="btn" >
                                         Logout
-                                    </a>
+                                    </button>
                                 </li>
-                            </>
+                            </div>
 
 
                         )}

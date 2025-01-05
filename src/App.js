@@ -11,7 +11,7 @@ import Profile from './Component/Profile';
 function App() {
   return (
     <Router>
-      <div className=" w=full relative overflow-hidden">
+      <div className=" w-full relative overflow-hidden">
         <Routes>
           <Route path="/" index element={<Dashboard />} />
           <Route path="/login" element={<Login />} />

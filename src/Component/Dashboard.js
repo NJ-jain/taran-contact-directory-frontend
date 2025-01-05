@@ -3,6 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { getAllMembersThunk } from '../features/member/memberSlice';
 import { useLocation, useNavigate } from 'react-router-dom';
 import Navbar from './Navbar';
+import SearchResults from './SearchResults';
 
 const Dashboard = () => {
   const dispatch = useDispatch();
@@ -13,7 +14,7 @@ const Dashboard = () => {
   useEffect(() => {
     const searchParams = new URLSearchParams(location.search);
     const queryParam = searchParams.get('search');
-    if(!queryParam) dispatch(getAllMembersThunk());
+    if (!queryParam) dispatch(getAllMembersThunk());
   }, [dispatch]);
 
   const [searchTerm, setSearchTerm] = useState('');
@@ -42,48 +43,52 @@ const Dashboard = () => {
       <Navbar />
       <div className="overflow-x-auto p-4 min-w-[100vw] min-h-[100vh] ">
 
-      {loading && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-20">
-          <span className="loading loading-dots loading-lg"></span>
-        </div>
-      )}
-         { error ? (
+        {loading && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-20">
+            <span className="loading loading-dots loading-lg"></span>
+          </div>
+        )}
+        {error ? (
           <p>Error: {error.message || 'An error occurred'}</p>
-        ) :  filteredMembers?.length > 0 ? (
+        ) : filteredMembers?.length > 0 ? (
           <div className="">
-          <div className="">
-            <div className="py-10 border-blueGray-200 text-center">
-              <ul className="space-y-4">
-                {filteredMembers?.map((member) => (
-                  <li
-                    key={member._id}
-                    onClick={() => handleDetailsClick(member._id)}  
-                    className="flex items-center p-4 bg-white rounded-lg shadow hover:bg-blue-50 transition cursor-pointer"
-                  >
-                    <img
-                      className="w-12 h-12 rounded-full mr-4 border border-blueGray-200"
-                      src={member.dp || '/path/to/fallback-image.jpg'}
-                      alt={`${member.firstName} ${member.lastName}`}
-                      onError={(e) => {
-                        e.target.src = '/path/to/fallback-image.jpg';
-                      }}
-                    />
-                    <div className="text-left">
-                      <span className="block text-lg font-medium text-blueGray-700 capitalize">
-                        {member.firstName} {member.lastName}
-                      </span>
-                      <span className="block text-sm text-blueGray-500">
-                        {member.phoneNumber}
-                      </span>
-                    </div>
-                  </li>
-                ))}
-              </ul>
+
+            <div className="sm:hidden flex items-center mb-4 ">
+              <SearchResults />
+            </div>
+            <div className="">
+              <div className="py-10 border-blueGray-200 text-center">
+                <ul className="space-y-4">
+                  {filteredMembers?.map((member) => (
+                    <li
+                      key={member._id}
+                      onClick={() => handleDetailsClick(member._id)}
+                      className="flex items-center p-4 bg-white rounded-lg shadow hover:bg-blue-50 transition cursor-pointer"
+                    >
+                      <img
+                        className="w-12 h-12 rounded-full mr-4 border border-blueGray-200"
+                        src={member.dp || '/path/to/fallback-image.jpg'}
+                        alt={`${member.firstName} ${member.lastName}`}
+                        onError={(e) => {
+                          e.target.src = '/path/to/fallback-image.jpg';
+                        }}
+                      />
+                      <div className="text-left">
+                        <span className="block text-lg font-medium text-blueGray-700 capitalize">
+                          {member.firstName} {member.lastName}
+                        </span>
+                        <span className="block text-sm text-blueGray-500">
+                          {member.phoneNumber}
+                        </span>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              </div>
             </div>
           </div>
-        </div>
         ) : (
-          <h3 className='absolute ' style={{top: "50%", left : "50%" , transform : "translate(-50%, -50%)"}}>No data present</h3> 
+          <h3 className='absolute ' style={{ top: "50%", left: "50%", transform: "translate(-50%, -50%)" }}>No data present</h3>
         )}
       </div>
       {hoveredImage && (
