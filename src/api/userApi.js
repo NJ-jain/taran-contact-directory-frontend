@@ -23,3 +23,8 @@ export const updateUser = async (userData) => {
     const response = await apiInstance.put(`${BASE_URL}/users`, data, { headers });
     return response.data;
 };
+
+
+export const approvalRequestApi = async () => {
+    await apiInstance.post(`${BASE_URL}/admin-approval-request`);
+}

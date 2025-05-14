@@ -44,7 +44,9 @@ const SearchResults = () => {
 
     // Effect to debounce the API call
     useEffect(() => {
-        debouncedSearch(searchQuery);
+        if (searchQuery.trim()) { // Only trigger search when query is not empty
+            debouncedSearch(searchQuery);
+        }
     }, [searchQuery, debouncedSearch]);
 
     // Close dropdown on outside click

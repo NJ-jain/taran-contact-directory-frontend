@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { registerUserThunk } from '../features/auth/authSlice';
+import { registerAdminThunk } from '../features/auth/authSlice';
 
-const Register = () => {
+const AdminRegister = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const { loading, error } = useSelector((state) => state.auth);
@@ -11,18 +11,8 @@ const Register = () => {
     const [formData, setFormData] = useState({
         email: '',
         password: '',
-        category: '',
         aboutUs: ''
     });
-
-    const categoryOptions = [
-        { value: "", label: "Select Category" },
-        { value: "ashoka_garden", label: "Ashoka Garden 🌳" },
-        { value: "kolar", label: "Kolar 🏞️" },
-        { value: "mandideep", label: "Mandideep 🏭" },
-        { value: "pansheel_nagar", label: "Pansheel Nagar 🏘️" },
-        { value: "mangalvara", label: "Mangalvara 🕌" }
-    ];
 
     const handleChange = (e) => {
         setFormData({
@@ -33,9 +23,9 @@ const Register = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        dispatch(registerUserThunk(formData)).then((result) => {
-            if (registerUserThunk.fulfilled.match(result)) {
-                navigate('/profile');
+        dispatch(registerAdminThunk(formData)).then((result) => {
+            if (registerAdminThunk.fulfilled.match(result)) {
+                navigate('/admin');
             }
         });
     };
@@ -46,7 +36,7 @@ const Register = () => {
                 <img src="https://img.freepik.com/fotos-premium/imagen-fondo_910766-187.jpg?w=826" alt="Placeholder Image" className="object-cover w-full h-full" />
             </div>
             <div className="lg:p-36 md:p-52 sm:20 p-8 w-full lg:w-1/2">
-                <h1 className="text-2xl font-semibold mb-4">Register</h1>
+                <h1 className="text-2xl font-semibold mb-4">Admin Registration</h1>
                 <form onSubmit={handleSubmit}>
                     <div className="mb-4 bg-sky-100">
                         <label htmlFor="email" className="block text-gray-600">Email Address</label>
@@ -73,22 +63,6 @@ const Register = () => {
                         />
                     </div>
                     <div className="mb-4">
-                        <label htmlFor="category" className="block text-gray-800">Category</label>
-                        <select
-                            id="category"
-                            name="category"
-                            value={formData.category}
-                            onChange={handleChange}
-                            className="w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:border-blue-500"
-                        >
-                            {categoryOptions.map(option => (
-                                <option key={option.value} value={option.value}>
-                                    {option.label}
-                                </option>
-                            ))}
-                        </select>
-                    </div>
-                    <div className="mb-4">
                         <label htmlFor="aboutUs" className="block text-gray-800">About</label>
                         <textarea
                             id="aboutUs"
@@ -101,20 +75,17 @@ const Register = () => {
                     </div>
                     <button 
                         type="submit" 
-                        className="bg-red-500 hover:bg-blue-600 text-white font-semibold rounded-md py-2 px-4 w-full" 
+                        className="bg-purple-500 hover:bg-purple-600 text-white font-semibold rounded-md py-2 px-4 w-full" 
                         disabled={loading}
                     >
-                        {loading ? 'Registering...' : 'Register'}
+                        {loading ? 'Registering...' : 'Register as Admin'}
                     </button>
                     {error && <p className="text-red-500 mt-2">{error?.message}</p>}
                 </form>
                 <div className="mt-6 text-center">
-                    <p className="text-gray-600">Already have an account?</p>
-                    <p className="text-green-500 hover:underline cursor-pointer mt-2" onClick={() => navigate('/login')}>
-                        Login Here
-                    </p>
-                    <p className="text-purple-500 hover:underline cursor-pointer mt-2" onClick={() => navigate('/admin/register')}>
-                        Register as Admin
+                    <p className="text-gray-600">Already have an admin account?</p>
+                    <p className="text-green-500 hover:underline cursor-pointer mt-2" onClick={() => navigate('/admin/login')}>
+                        Login as Admin
                     </p>
                 </div>
             </div>
@@ -122,4 +93,4 @@ const Register = () => {
     );
 }
 
-export default Register;
+export default AdminRegister; 

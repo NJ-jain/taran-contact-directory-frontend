@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { getUser, updateUser } from '../../api/userApi'; // Assume these functions are defined in userApi.js
+import { approvalRequestApi, getUser, updateUser } from '../../api/userApi'; // Assume these functions are defined in userApi.js
 
 
 
@@ -28,6 +28,18 @@ export const updateUserThunk = createAsyncThunk(
         }
     }
 );
+
+export const approvalRequestThunk = createAsyncThunk(
+    'user/approvalRequest',
+    async () => {
+        try {
+             await approvalRequestApi();
+        } catch (err) {
+            console.log(err);
+        }
+    }
+);
+
 
 const userSlice = createSlice({
     name: 'user',

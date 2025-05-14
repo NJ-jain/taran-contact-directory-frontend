@@ -14,8 +14,8 @@ const Dashboard = () => {
   useEffect(() => {
     const searchParams = new URLSearchParams(location.search);
     const queryParam = searchParams.get('search');
-    if (!queryParam) dispatch(getAllMembersThunk());
-  }, [dispatch]);
+    if (!queryParam || queryParam.trim() === '') dispatch(getAllMembersThunk());
+  }, [dispatch,  location.search]);
 
   const [searchTerm, setSearchTerm] = useState('');
   const [hoveredImage, setHoveredImage] = useState(''); // State to hold the hovered image source

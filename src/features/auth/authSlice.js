@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { registerUser, loginUser } from '../../api/authApi';
+import { registerUser, loginUser, registerAdminUser, loginUserAdmin } from '../../api/authApi';
 
 export const registerUserThunk = createAsyncThunk(
     'auth/registerUser',
@@ -9,6 +9,36 @@ export const registerUserThunk = createAsyncThunk(
             return response;
         } catch (err) {
             return rejectWithValue(err.response.data);
+        }
+    }
+);
+
+export const registerAdminThunk = createAsyncThunk(
+    'auth/registerAdmin',
+    async (adminData, { rejectWithValue }) => {
+        try {
+            const response = await registerAdminUser(adminData);
+
+            if (!response.ok) {
+                const error = await response.json();
+                return rejectWithValue(error);
+            }
+            return response;
+        } catch (err) {
+            return rejectWithValue(err.response.data);
+        }
+    }
+);
+
+
+export const loginAdminThunk = createAsyncThunk(
+    'auth/loginAdmin',
+    async (adminData, { rejectWithValue }) => {
+        try {
+            const response = await loginUserAdmin(adminData);
+            return response;
+        } catch (error) { 
+            return rejectWithValue(error.response?.data || error.message);
         }
     }
 );
@@ -59,6 +89,35 @@ const authSlice = createSlice({
                 localStorage.setItem('authorization', action.payload.token); // Store token in local storage
             })
             .addCase(loginUserThunk.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload;
+            })
+
+
+            .addCase(registerAdminThunk.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+            })
+            .addCase(registerAdminThunk.fulfilled, (state, action) => {
+                state.loading = false;
+                state.user = action.payload;
+                localStorage.setItem('adminAuthorization', action.payload.token);
+            })
+            .addCase(registerAdminThunk.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload;
+            })
+
+            .addCase(loginAdminThunk.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+            })
+            .addCase(loginAdminThunk.fulfilled, (state, action) => {
+                state.loading = false;
+                state.user = action.payload;
+                localStorage.setItem('adminAuthorization', action.payload.token);
+            })
+            .addCase(loginAdminThunk.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload;
             });

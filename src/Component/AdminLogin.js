@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { loginUserThunk } from '../features/auth/authSlice';
+import { loginAdminThunk } from '../features/auth/authSlice';
 import { Eye, EyeOff } from 'lucide-react';
 
-const Login = () => {
+const AdminLogin = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const { loading, error } = useSelector((state) => state.auth);
@@ -28,9 +28,9 @@ const Login = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        dispatch(loginUserThunk(formData)).then((result) => {
-            if (loginUserThunk.fulfilled.match(result)) {
-                navigate('/profile');
+        dispatch(loginAdminThunk(formData)).then((result) => {
+            if (loginAdminThunk.fulfilled.match(result)) {
+                navigate('/admin');
             }
         });
     };
@@ -41,7 +41,7 @@ const Login = () => {
                 <img src="https://img.freepik.com/fotos-premium/imagen-fondo_910766-187.jpg?w=826" alt="Placeholder Image" className="object-cover w-full h-full" />
             </div>
             <div className="lg:p-36 md:p-52 sm:20 p-8 w-full lg:w-1/2">
-                <h1 className="text-2xl font-semibold mb-4">Login</h1>
+                <h1 className="text-2xl font-semibold mb-4">Admin Login</h1>
                 <form onSubmit={handleSubmit}>
                     <div className="mb-4 bg-sky-100">
                         <label htmlFor="email" className="block text-gray-600">Email</label>
@@ -75,29 +75,22 @@ const Login = () => {
                             {showPassword ? <EyeOff /> : <Eye />}
                         </button>
                     </div>
-                    <div className="mb-4 flex items-center">
-                        <input type="checkbox" id="remember" name="remember" className="text-red-500" />
-                        <label htmlFor="remember" className="text-green-900 ml-2">Remember Me</label>
-                    </div>
                     <div className="mb-6 text-blue-500">
                         <a href="#" className="hover:underline">Forgot Password?</a>
                     </div>
                     <button
                         type="submit"
-                        className="bg-red-500 hover:bg-blue-600 text-white font-semibold rounded-md py-2 px-4 w-full"
+                        className="bg-purple-500 hover:bg-purple-600 text-white font-semibold rounded-md py-2 px-4 w-full"
                         disabled={loading}
                     >
-                        {loading ? 'Logging in...' : 'Login'}
+                        {loading ? 'Logging in...' : 'Admin Login'}
                     </button>
                     {error && <p className="text-red-500 mt-2">{error.message}</p>}
                 </form>
                 <div className="mt-6 text-center">
-                    <p className="text-gray-600">Don't have an account?</p>
-                    <p className="text-green-500 hover:underline cursor-pointer mt-2" onClick={() => navigate('/register')}>
-                        Sign up Here
-                    </p>
-                    <p className="text-purple-500 hover:underline cursor-pointer mt-2" onClick={() => navigate('/admin/login')}>
-                        Login as Admin
+                    <p className="text-gray-600">Don't have an admin account?</p>
+                    <p className="text-green-500 hover:underline cursor-pointer mt-2" onClick={() => navigate('/admin/register')}>
+                        Register as Admin
                     </p>
                 </div>
             </div>
@@ -105,4 +98,4 @@ const Login = () => {
     );
 }
 
-export default Login;
+export default AdminLogin; 

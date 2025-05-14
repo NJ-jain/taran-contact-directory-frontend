@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { getUserThunk } from '../features/user/userSlice';
 import SearchResults from './SearchResults';
+import { LogOut, UserRound } from 'lucide-react';
 
 const Navbar = () => {
     const [menuOpen, setMenuOpen] = useState(false); // State for controlling the menu
@@ -98,6 +99,7 @@ const Navbar = () => {
                                             className="btn btn-block"
                                         >
                                             Logout
+
                                         </button>
                                     </li>
                                 </>
@@ -130,7 +132,7 @@ const Navbar = () => {
                                 </li>
                             </div>
                         ) : (
-                            <div className='flex items-center justify-center gap-8'>
+                            <div className='flex items-center justify-center gap-4'>
                                 <li>
                                     <SearchResults />
 
@@ -138,10 +140,10 @@ const Navbar = () => {
                                 <li>
                                     <button
                                         onClick={() => navigate('/profile')}
-                                        className="btn "
+                                        className="btn btn-outline"
                                         aria-current="page"
                                     >
-                                        Profile
+                                        <UserRound color="#0084ff" />
                                     </button>
                                 </li>
                                 <li>
@@ -150,8 +152,8 @@ const Navbar = () => {
                                             localStorage.clear();
                                             navigate('/login');
                                         }}
-                                        className="btn" >
-                                        Logout
+                                        className="btn btn-outline" >
+                                        <LogOut color="#0084ff" />
                                     </button>
                                 </li>
                             </div>
