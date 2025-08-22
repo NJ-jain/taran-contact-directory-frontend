@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { searchMembersThunk } from '../features/member/memberSlice';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { Search, User } from 'lucide-react';
 
 const SearchResults = () => {
     const [searchQuery, setSearchQuery] = useState('');
@@ -44,7 +45,7 @@ const SearchResults = () => {
 
     // Effect to debounce the API call
     useEffect(() => {
-        if (searchQuery.trim()) { // Only trigger search when query is not empty
+        if (searchQuery.trim()) {
             debouncedSearch(searchQuery);
         }
     }, [searchQuery, debouncedSearch]);
@@ -62,33 +63,73 @@ const SearchResults = () => {
 
     return (
         <div className="relative" ref={ref}>
-            <input
-                type="text"
-                placeholder="Search"
-                className="input input-bordered lg:w-52 xl:w-52 2xl:w-52 md:w-auto w-72 xs:w-[21rem] nj:w-[24.5rem] "
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                onFocus={() => setIsInputFocused(true)}
-            />
+            <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <Search className="h-5 w-5 text-gray-400" />
+                </div>
+                <input
+                    type="text"
+                    placeholder="Search contacts..."
+                    className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-200 text-sm"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    onFocus={() => setIsInputFocused(true)}
+                />
+            </div>
+            
             {isInputFocused && location.pathname !== '/' && members.length > 0 && (
-                <div className="absolute top-[50px]  lg:w-52 xl:w-52 2xl:w-52 md:w-auto w-72 xs:w-[21rem] right-0 z-50 bg-white rounded-xl shadow-lg">
-                    <ul className='md:w-56'>
-                        {members.slice(0, 10).map((data) => (
-                            <li
-                                key={data.id}
-                                className="flex items-center cursor-pointer hover:bg-base-300 p-2 border-b space-x-3"
-                                onClick={() => navigate(`/details/${data._id}`)}
-                            >
-                                <img src={data.dp} alt={data.firstName} className="w-10 h-10 rounded-full" />
-                                <span>{data.firstName} {data.lastName}</span>
-                            </li>
-                        ))}
-                        {members.length > 10 && (
-                            <li className="flex items-center cursor-pointer hover:bg-base-300 p-2 border-b space-x-3">
-                                <button className="btn-sm btn">Show More</button>
-                            </li>
+                <div className="absolute top-full mt-1 w-full bg-white rounded-lg shadow-medium border border-gray-200 z-50 animate-fade-in">
+                    <div className="py-2">
+                        <div className="px-3 py-2 text-xs font-medium text-gray-500 uppercase tracking-wide">
+                            Search Results
+                        </div>
+                        <ul className="max-h-64 overflow-y-auto">
+                            {members.slice(0, 8).map((data) => (
+                                <li
+                                    key={data.id}
+                                    className="flex items-center cursor-pointer hover:bg-gray-50 px-3 py-2 transition-colors duration-150"
+                                    onClick={() => {
+                                        navigate(`/details/${data._id}`);
+                                        setIsInputFocused(false);
+                                    }}
+                                >
+                                    <div className="flex-shrink-0">
+                                        <img 
+                                            src={data.dp} 
+                                            alt={data.firstName} 
+                                            className="w-8 h-8 rounded-full object-cover border border-gray-200"
+                                            onError={(e) => {
+                                                e.target.src = 'https://via.placeholder.com/32x32/6B7280/FFFFFF?text=' + (data.firstName?.charAt(0) || '?');
+                                            }}
+                                        />
+                                    </div>
+                                    <div className="ml-3 min-w-0 flex-1">
+                                        <p className="text-sm font-medium text-gray-900 truncate">
+                                            {data.firstName} {data.lastName}
+                                        </p>
+                                        {data.phoneNumber && (
+                                            <p className="text-xs text-gray-500 truncate">
+                                                {data.phoneNumber}
+                                            </p>
+                                        )}
+                                    </div>
+                                </li>
+                            ))}
+                        </ul>
+                        {members.length > 8 && (
+                            <div className="border-t border-gray-100 px-3 py-2">
+                                <button 
+                                    className="w-full text-left text-sm text-primary-600 hover:text-primary-700 font-medium"
+                                    onClick={() => {
+                                        navigate('/');
+                                        setIsInputFocused(false);
+                                    }}
+                                >
+                                    View all {members.length} results
+                                </button>
+                            </div>
                         )}
-                    </ul>
+                    </div>
                 </div>
             )}
         </div>

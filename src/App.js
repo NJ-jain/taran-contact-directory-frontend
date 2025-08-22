@@ -5,8 +5,8 @@ import Login from './Component/Login';
 import Register from './Component/Register';
 import AdminLogin from './Component/AdminLogin';
 import AdminRegister from './Component/AdminRegister';
-import ProtectedRoute from './Component/ProtectedRoute'; // Ensure this path is correct
-import Dashboard from './Component/Dashboard'; // Import the component you want to protect
+import ProtectedRoute from './Component/ProtectedRoute';
+import Dashboard from './Component/Dashboard';
 import Details from './Component/Details';
 import Profile from './Component/Profile';
 import Admin from './Component/admin';
@@ -15,7 +15,7 @@ import AdminProtectedRoute from './Component/AdminProtectedRoute';
 function App() {
   return (
     <Router>
-      <div className=" w-full relative overflow-hidden">
+      <div className="min-h-screen bg-gray-50 font-sans antialiased">
         <Routes>
           <Route path="/" index element={<Dashboard />} />
           <Route path="/login" element={<Login />} />
@@ -25,12 +25,12 @@ function App() {
           <Route path='/details/:id' element={<Details />} />
           <Route
             exact
-            path="/profile" // Define the route for the "aftersignup" page
+            path="/profile"
             element={
               <ProtectedRoute>
                 <Profile />
               </ProtectedRoute>
-            } // Render the "aftersignup" page component
+            }
           />
           <Route
             path="/admin"
@@ -40,7 +40,6 @@ function App() {
                 </AdminProtectedRoute>
             }
           />
-          
         </Routes>
       </div>
     </Router>

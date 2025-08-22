@@ -5,7 +5,6 @@ export const getAllUsersThunk = createAsyncThunk(
     'admin/getAllUsers',
     async (_, { rejectWithValue }) => {
         try {
-
             const response = await getAllUsers();
             return response;
         } catch (error) {
