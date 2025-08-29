@@ -1,107 +1,63 @@
-import { CircleCheck, CircleX, Image, Search } from 'lucide-react'
-import React, { useEffect, useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import { getAllUsersThunk, setSelectedUser } from '../features/admin/adminSlice'
-import UserMembers from './UserMembers'
+import React from 'react';
+import { useLocation, useParams } from 'react-router-dom';
+import AdminDashboard from './AdminDashboard';
+import AdminOverview from './AdminOverview';
+import AdminUsersList from './AdminUsersList';
+import AdminMembersList from './AdminMembersList';
+import UserMembers from './UserMembers';
 
 const Admin = () => {
-    const dispatch = useDispatch()
-    const { users, loading, error, selectedUser } = useSelector((state) => state.admin)
-    const [searchTerm, setSearchTerm] = useState('')
-
-    useEffect(() => {
-        dispatch(getAllUsersThunk())
-    }, [dispatch])
-
-    // Filter users based on search term
-    const filteredUsers = users?.filter(user => 
-        user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        user.category?.toLowerCase().includes(searchTerm.toLowerCase())
-    )
-
-    const handleUserClick = (user) => {
-        dispatch(setSelectedUser(user));
+    const location = useLocation();
+    const { userId } = useParams();
+    
+    // Determine which page to show based on the current path
+    const getActivePage = () => {
+        if (location.pathname === '/admin') return 'dashboard';
+        if (location.pathname === '/admin/users') return 'users';
+        if (location.pathname.startsWith('/admin/members')) return 'members';
+        if (location.pathname === '/admin/settings') return 'settings';
+        return 'dashboard';
     };
 
-    const handleBack = () => {
-        dispatch(setSelectedUser(null));
+    const getPageContent = () => {
+        // If we're on a specific user's members page
+        if (userId) {
+            return <UserMembers userId={userId} />;
+        }
+
+        switch (getActivePage()) {
+            case 'dashboard':
+                return <AdminOverview />;
+            case 'users':
+                return <AdminUsersList />;
+            case 'members':
+                return <AdminMembersList />;
+            case 'settings':
+                return (
+                    <div className="space-y-6">
+                        <div>
+                            <h1 className="text-2xl font-bold text-gray-900">Settings</h1>
+                            <p className="mt-1 text-sm text-gray-500">
+                                Configure system settings and preferences.
+                            </p>
+                        </div>
+                        <div className="bg-white shadow rounded-lg">
+                            <div className="px-4 py-5 sm:p-6">
+                                <p className="text-gray-500">Settings page coming soon...</p>
+                            </div>
+                        </div>
+                    </div>
+                );
+            default:
+                return <AdminOverview />;
+        }
     };
-
-    if (loading) return <div className="p-4">Loading...</div>
-    if (error) return <div className="p-4 text-red-500">Error: {error.message}</div>
-
-    // If a user is selected, show the UserMembers component
-    if (selectedUser) {
-        return <UserMembers onBack={handleBack} />;
-    }
 
     return (
-        <div className='p-4 flex-col flex gap-2'>
-            <div>
-                <label htmlFor="searchInput">Search</label>
-                <div className='flex justify-start items-center gap-2 p-4 border rounded-lg w-full'>
-                    <Search />
-                    <input 
-                        type='text' 
-                        id="searchInput" 
-                        placeholder='Search by email or category' 
-                        className='w-full outline-none'
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                    />
-                </div>
-            </div>
+        <AdminDashboard activePage={getActivePage()}>
+            {getPageContent()}
+        </AdminDashboard>
+    );
+};
 
-            <h2 className='text-lg font-semibold'>
-                People ({filteredUsers?.length || 0})
-            </h2>
-            
-            <ul className="space-y-2">
-                {filteredUsers?.map(user => (
-                    <li 
-                        key={user._id} 
-                        className='flex justify-between items-center p-4 border rounded-lg hover:bg-gray-50 cursor-pointer'
-                        onClick={() => handleUserClick(user)}
-                    >
-                        <span className='flex justify-start items-center gap-2 w-full'>
-                            {user.banner ? (
-                                <img 
-                                    src={user.banner} 
-                                    alt="User" 
-                                    className="w-10 h-10 rounded-full object-cover"
-                                />
-                            ) : (
-                                <Image className="w-10 h-10 p-2 bg-gray-100 rounded-full" />
-                            )}
-                            <div className="flex flex-col">
-                                <span className="font-medium">{user.email}</span>
-                                <span className="text-sm text-gray-500">{user.category}</span>
-                            </div>
-                        </span>
-                        {/* <span className='flex justify-end items-center gap-2'>
-                            <button 
-                                className="text-red-500 hover:text-red-600"
-                                title="Reject"
-                            >
-                                <CircleX size={32} />
-                            </button>
-                            <button 
-                                className="text-green-500 hover:text-green-600"
-                                title="Approve"
-                            >
-                                <CircleCheck size={32} />
-                            </button>
-                        </span> */}
-                    </li>
-                ))}
-                {filteredUsers?.length === 0 && (
-                    <li className="text-center text-gray-500 py-4">
-                        No users found
-                    </li>
-                )}
-            </ul>
-        </div>
-    )
-}
-
-export default Admin
+export default Admin;

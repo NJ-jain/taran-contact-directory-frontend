@@ -43,6 +43,17 @@ const Profile = () => {
   const [selectedMember, setSelectedMember] = useState(null);
   const [initialMemberState, setInitialMemberState] = useState(null);
 
+  // Function to format date for HTML date input (YYYY-MM-DD)
+  const formatDateForInput = (dateString) => {
+    if (!dateString) return '';
+    try {
+      const date = new Date(dateString);
+      return date.toISOString().split('T')[0]; // Returns YYYY-MM-DD format
+    } catch (error) {
+      return dateString; // Return original string if parsing fails
+    }
+  };
+
   const handleMemberSave = () => {
     if (selectedMember) {
       const formData = new FormData();
@@ -219,8 +230,13 @@ const Profile = () => {
   };
 
   const handleFilePenLineClick = (member) => {
-    setSelectedMember(member);
-    setInitialMemberState(member); // Store initial state
+    // Format the date properly for the date input
+    const formattedMember = {
+      ...member,
+      dob: formatDateForInput(member.dob)
+    };
+    setSelectedMember(formattedMember);
+    setInitialMemberState(formattedMember); // Store initial state
     setIsMemberModalOpen(true);
   };
 
@@ -236,6 +252,7 @@ const Profile = () => {
       address: "",
       email: "",
       phoneNumber: "",
+      dob: "",
       dp: null, // Default image or placeholder
       dpFile: null,
     });
@@ -265,7 +282,7 @@ const Profile = () => {
   return (
     <>
       <Navbar />
-      <main className="profile-page">
+      <main className="profile-page min-h-screen bg-gray-50">
         {(loading || memberLoading) && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-20">
             <span className="loading loading-dots loading-lg"></span>
@@ -273,7 +290,8 @@ const Profile = () => {
         )}
         {userData && (
           <>
-            <section className="relative block h-[300px] sm:h-[400px] md:h-[300px] lg:h-[500px]">
+            {/* Banner Section */}
+            <section className="relative block h-[200px] sm:h-[250px] md:h-[300px] lg:h-[400px] xl:h-[500px]">
               <div
                 className="absolute top-0 w-full h-full bg-center bg-cover"
                 style={{
@@ -292,13 +310,13 @@ const Profile = () => {
                   name="bannerImage"
                 />
                 <ImagePlus
-                  size={30}
+                  size={24}
                   color="white"
-                  className="absolute z-10 top-0 right-0 m-5 hover:cursor-pointer hover:bg-gray-700 p-1 rounded"
+                  className="absolute z-10 top-2 right-2 sm:top-4 sm:right-4 md:top-5 md:right-5 hover:cursor-pointer hover:bg-gray-700 p-1 rounded"
                   onClick={handleImagePlusClick}
                 />
                 <select
-                  className="sticky z-10 top-0 left-0 m-5 bg-gray-400 text-white p-2 rounded hover:bg-gray-700"
+                  className="absolute z-10 top-2 left-2 sm:top-4 sm:left-4 md:top-5 md:left-5 bg-gray-400 text-white p-1 sm:p-2 rounded hover:bg-gray-700 text-xs sm:text-sm md:text-base"
                   value={userData.category}
                   onChange={(e) => {
                     const selectedCategory = e.target.value;
@@ -315,56 +333,62 @@ const Profile = () => {
                 </select>
               </div>
             </section>
-            <section className="relative py-16 bg-blueGray-200">
-              <div className="container mx-auto px-4">
-                <div className="relative flex flex-col min-w-0 break-words bg-white w-full mb-6 shadow-xl rounded-lg -mt-40">
-                  <div className="px-6">
-                    <div className="mt-2" ref={aboutUsRef}>
-                      <h3 className="text-2xl sm:text-3xl md:text-4xl font-semibold leading-normal mb-2 text-blueGray-700 flex items-center justify-between">
+
+            {/* Main Content Section */}
+            <section className="relative py-8 sm:py-12 md:py-16 bg-gray-50">
+              <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+                <div className="relative flex flex-col min-w-0 break-words bg-white w-full mb-6 shadow-xl rounded-lg -mt-16 sm:-mt-20 md:-mt-24 lg:-mt-32 xl:-mt-40">
+                  <div className="px-4 sm:px-6 lg:px-8">
+                    {/* About Us Section */}
+                    <div className="mt-4 sm:mt-6 md:mt-8" ref={aboutUsRef}>
+                      <h3 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-semibold leading-normal mb-2 text-gray-700 flex items-center justify-between">
                         About Us 📝
                         <button
                           onClick={handleEditAboutUsClick}
-                          className="ml-2 text-sm text-blue-500"
+                          className="ml-2 text-sm text-blue-500 hover:text-blue-700"
                         >
-                          <Pencil size={20} />
+                          <Pencil size={16} className="sm:w-5 sm:h-5" />
                         </button>
                       </h3>
                       {isEditingAboutUs ? (
-                        <div>
+                        <div className="space-y-2">
                           <textarea
                             value={aboutUsText || ""}
                             onChange={handleAboutUsChange}
-                            className="w-full p-2 border rounded"
+                            className="w-full p-2 sm:p-3 border rounded text-sm sm:text-base"
+                            rows="4"
                           />
                           <button
                             onClick={handleAboutUsSave}
-                            className="btn btn-success text-white p-2 rounded mt-2"
+                            className="btn btn-success text-white p-2 rounded text-sm sm:text-base"
                           >
                             Save 💾
                           </button>
                         </div>
                       ) : (
-                        <p className="text-sm sm:text-base md:text-lg leading-normal mt-0 mb-2 text-blueGray-400">
+                        <p className="text-sm sm:text-base md:text-lg leading-normal mt-0 mb-2 text-gray-600">
                           {userData.aboutUs ? userData.aboutUs : ""}
                         </p>
                       )}
                     </div>
-                    <div className="py-10">
-                      <h4 className="text-2xl font-semibold leading-normal mb-2 text-blueGray-700">
+
+                    {/* Family Members Section */}
+                    <div className="py-6 sm:py-8 md:py-10">
+                      <h4 className="text-xl sm:text-2xl font-semibold leading-normal mb-4 sm:mb-6 text-gray-700">
                         Family Members 👨‍👩‍👧‍👦
                       </h4>
-                      <div className="flex flex-wrap gap-4">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
                         {userData.membersArray &&
                           userData.membersArray.map((member) => (
                             <div
                               key={member._id}
-                              className="card bg-base-100 shadow-md hover:shadow-2xl w-72"
+                              className="card bg-base-100 shadow-md hover:shadow-2xl transition-shadow duration-300"
                             >
-                              <figure className="px-4 pt-4 ">
+                              <figure className="px-3 sm:px-4 pt-3 sm:pt-4">
                                 <img
                                   src={`${member.dp}`}
                                   alt={`${member.firstName} ${member.lastName}`}
-                                  className="h-60 w-full object-contain"
+                                  className="h-48 sm:h-56 md:h-60 w-full object-contain rounded-lg"
                                   loading="lazy"
                                   onError={(e) => {
                                     e.target.src =
@@ -373,317 +397,341 @@ const Profile = () => {
                                 />
                                 {member.familyHead ? (
                                   <div
-                                    className="tooltip absolute top-5 left-5"
+                                    className="tooltip absolute top-2 left-2 sm:top-3 sm:left-3"
                                     data-tip="Family head"
                                   >
-                                    <button className="btn btn-ghost btn-sm">
-                                      <Crown size={20} color="yellow" />
+                                    <button className="btn btn-ghost btn-xs sm:btn-sm">
+                                      <Crown size={16} className="sm:w-5 sm:h-5" color="yellow" />
                                     </button>
                                   </div>
                                 ) : (
                                   ""
                                 )}
                                 <FilePenLine
-                                  className="absolute top-5 right-5 hover:cursor-pointer bg-gray-700 p-1 rounded"
+                                  className="absolute top-2 right-2 sm:top-3 sm:right-3 hover:cursor-pointer bg-gray-700 p-1 rounded sm:w-7 sm:h-7"
                                   color="white"
-                                  size={30}
+                                  size={20}
                                   onClick={() => handleFilePenLineClick(member)}
                                 />
                               </figure>
-                              <div className="card-body">
-                                <h2 className="card-title text-sm">
+                              <div className="card-body p-3 sm:p-4">
+                                <h2 className="card-title text-sm sm:text-base">
                                   {member.isApproved && (
                                     <div
                                       className="tooltip"
                                       data-tip="approved by admin"
                                     >
-                                      {/* <button className="btn">Hover me</button> */}
                                       <span>
-                                        {" "}
                                         <CircleCheckBig
                                           color="#0084ff"
-                                          className=" w-fit "
-                                        />{" "}
-                                      </span>{" "}
+                                          size={16}
+                                          className="sm:w-5 sm:h-5"
+                                        />
+                                      </span>
                                     </div>
                                   )}
-                                  <span className="capitalize ">
-                                    {" "}
+                                  <span className="capitalize">
                                     {member.firstName}
                                   </span>{" "}
                                   <span className="capitalize">
                                     {member.lastName}
                                   </span>
                                 </h2>
-                                <p className="text-xs">
-                                  <strong>Phone Number:</strong>{" "}
-                                  {member.phoneNumber}
-                                </p>
-                                <p className="text-xs">
-                                  <strong>Email:</strong> {member.email}
-                                </p>
-                                <p className="text-xs">
-                                  <strong>Address:</strong> {member.address}
-                                </p>
+                                <div className="space-y-1 text-xs sm:text-sm">
+                                  <p>
+                                    <strong>Phone:</strong> {member.phoneNumber}
+                                  </p>
+                                  <p>
+                                    <strong>Email:</strong> {member.email}
+                                  </p>
+                                  <p>
+                                    <strong>Address:</strong> {member.address}
+                                  </p>
+                                </div>
                               </div>
                             </div>
                           ))}
+                        
+                        {/* Add Member Card */}
                         <div
-                          className="card bg-base-100 shadow-md hover:shadow-2xl flex items-center cursor-pointer justify-center w-72 min-h-[412px]"
+                          className="card bg-base-100 shadow-md hover:shadow-2xl flex items-center cursor-pointer justify-center min-h-[280px] sm:min-h-[320px] md:min-h-[360px] transition-shadow duration-300"
                           onClick={handleAddMemberClick}
                         >
-                          <CirclePlus size={48} className="text-gray-600" />
+                          <div className="text-center">
+                            <CirclePlus size={32} className="sm:w-12 sm:h-12 text-gray-600 mx-auto mb-2" />
+                            <p className="text-sm sm:text-base text-gray-600">Add New Member</p>
+                          </div>
                         </div>
                       </div>
                     </div>
-                  </div>
-                  {userData.membersArray.length > 0 &&
-                    < button className="btn btn-ghost" onClick={handleRequestApproval}>Request Approval</button>
-                  }
 
+                    {/* Request Approval Button */}
+                    {userData.membersArray.length > 0 && !userData.membersArray.every(member => member.isApproved) && (
+                      <div className="pb-6 sm:pb-8">
+                        <button 
+                          className="btn btn-primary text-white px-4 py-2 rounded-lg text-sm sm:text-base"
+                          onClick={handleRequestApproval}
+                        >
+                          Request Approval
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                </div>
               </div>
-            </div>
-          </section>
-      </>
+            </section>
+          </>
         )}
 
-      {isModalOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-30">
-          <div className="bg-white p-4 rounded shadow-lg w-full max-w-md sm:max-w-lg md:max-w-xl lg:max-w-2xl">
-            <div className="relative w-full h-64 sm:h-80 md:h-96">
-              <Cropper
-                image={selectedImage}
-                crop={crop}
-                zoom={zoom}
-                aspect={4 / 3}
-                onCropChange={setCrop}
-                onZoomChange={setZoom}
-                onCropComplete={onCropComplete}
-              />
-            </div>
-            <div className="flex justify-end mt-4 space-x-2">
-              <button
-                onClick={handleCropSave}
-                className="bg-green-500 text-white p-2 rounded"
-              >
-                Save
-              </button>
-              <button
-                onClick={closeModal}
-                className="bg-red-500 text-white p-2 rounded"
-              >
-                Close
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {isMemberModalOpen && selectedMember && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-30">
-          <div className="bg-white p-6 rounded-lg shadow-2xl w-full max-w-md sm:max-w-lg md:max-w-xl lg:max-w-2xl transform transition-all duration-300 ease-in-out">
-            <div className="flex items-center justify-between mb-10 w-full">
-              <h3 className="text-2xl font-bold text-center text-gray-800">
-                {" "}
-                {selectedMember._id
-                  ? "Edit Member Details"
-                  : "Add New Member"}
-              </h3>
-              <X
-                size={20}
-                color="red"
-                onClick={closeMemberModal}
-                className="hover:cursor-pointer"
-              />
-            </div>
-            {selectedMember.dp ? (
-              <img
-                src={selectedMember.dp}
-                alt="Profile"
-                className="w-full h-48 object-contain rounded-lg mb-4"
-                onClick={() =>
-                  document.getElementById("memberImageInput").click()
-                } // Trigger file input click
-              />
-            ) : (
-              <ImageUp
-                size={48}
-                className="w-full h-48 object-contain rounded-lg mb-4 cursor-pointer"
-                onClick={() =>
-                  document.getElementById("memberImageInput").click()
-                }
-              />
-            )}
-            {/* Profile Picture Field */}
-            {fieldErrors.dpFile && (
-              <p className="text-red-500 text-xs text-center">
-                {fieldErrors.dpFile}
-              </p>
-            )}
-            <input
-              type="file"
-              id="memberImageInput"
-              style={{ display: "none" }}
-              onChange={(e) => {
-                const file = e.target.files[0];
-                if (file) {
-                  const imageUrl = URL.createObjectURL(file);
-                  setSelectedMember((prev) => ({
-                    ...prev,
-                    dp: imageUrl,
-                    dpFile: file,
-                  })); // Store file object
-                }
-              }}
-            />
-            <div className="space-y-2">
-              {/* First Name Field */}
-              <label className="block text-gray-600">
-                <strong>First Name:</strong>
-                <input
-                  type="text"
-                  value={selectedMember.firstName}
-                  className="w-full p-2 border rounded"
-                  onChange={(e) => {
-                    setSelectedMember((prev) => ({
-                      ...prev,
-                      firstName: e.target.value,
-                    }));
-                    setFieldErrors((prev) => ({ ...prev, firstName: null }));
-                  }}
+        {/* Banner Crop Modal */}
+        {isModalOpen && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-30 p-4">
+            <div className="bg-white p-4 rounded shadow-lg w-full max-w-sm sm:max-w-md md:max-w-lg lg:max-w-xl">
+              <div className="relative w-full h-48 sm:h-64 md:h-80">
+                <Cropper
+                  image={selectedImage}
+                  crop={crop}
+                  zoom={zoom}
+                  aspect={4 / 3}
+                  onCropChange={setCrop}
+                  onZoomChange={setZoom}
+                  onCropComplete={onCropComplete}
                 />
-                {fieldErrors.firstName && (
-                  <p className="text-red-500 text-xs">
-                    {fieldErrors.firstName}
-                  </p>
-                )}
-              </label>
-              {/* Last Name Field */}
-              <label className="block text-gray-600">
-                <strong>Last Name:</strong>
-                <input
-                  type="text"
-                  value={selectedMember.lastName}
-                  className="w-full p-2 border rounded"
-                  onChange={(e) => {
-                    setSelectedMember((prev) => ({
-                      ...prev,
-                      lastName: e.target.value,
-                    }));
-                    setFieldErrors((prev) => ({ ...prev, lastName: null }));
-                  }}
-                />
-                {fieldErrors.lastName && (
-                  <p className="text-red-500 text-xs">
-                    {fieldErrors.lastName}
-                  </p>
-                )}
-              </label>
-              {/* Address Field */}
-              <label className="block text-gray-600">
-                <strong>Address:</strong>
-                <input
-                  type="text"
-                  value={selectedMember.address}
-                  className="w-full p-2 border rounded"
-                  onChange={(e) => {
-                    setSelectedMember((prev) => ({
-                      ...prev,
-                      address: e.target.value,
-                    }));
-                    setFieldErrors((prev) => ({ ...prev, address: null }));
-                  }}
-                />
-                {fieldErrors.address && (
-                  <p className="text-red-500 text-xs">
-                    {fieldErrors.address}
-                  </p>
-                )}
-              </label>
-              {/* Email Field */}
-              <label className="block text-gray-600">
-                <strong>Email:</strong>
-                <input
-                  type="email"
-                  value={selectedMember.email}
-                  className="w-full p-2 border rounded"
-                  onChange={(e) => {
-                    setSelectedMember((prev) => ({
-                      ...prev,
-                      email: e.target.value,
-                    }));
-                    setFieldErrors((prev) => ({ ...prev, email: null }));
-                  }}
-                />
-                {fieldErrors.email && (
-                  <p className="text-red-500 text-xs">{fieldErrors.email}</p>
-                )}
-              </label>
-              {/* Phone Number Field */}
-              <label className="block text-gray-600">
-                <strong>Phone Number:</strong>
-                <input
-                  type="text" // Changed to text to allow for international numbers and formatting
-                  value={selectedMember.phoneNumber}
-                  className="w-full p-2 border rounded"
-                  onChange={(e) => {
-                    setSelectedMember((prev) => ({
-                      ...prev,
-                      phoneNumber: e.target.value,
-                    }));
-                    setFieldErrors((prev) => ({
-                      ...prev,
-                      phoneNumber: null,
-                    }));
-                  }}
-                />
-                {fieldErrors.phoneNumber && (
-                  <p className="text-red-500 text-xs">
-                    {fieldErrors.phoneNumber}
-                  </p>
-                )}
-              </label>
-              {/* Date of Birth Field */}
-              <label className="block text-gray-600">
-                <strong>Date of Birth:</strong>
-                <input
-                  type="date"
-                  value={selectedMember.dob}
-                  className="w-full p-2 border rounded"
-                  onChange={(e) => {
-                    setSelectedMember((prev) => ({
-                      ...prev,
-                      dob: e.target.value,
-                    }));
-                    setFieldErrors((prev) => ({ ...prev, dob: null }));
-                  }}
-                />
-                {fieldErrors.dob && (
-                  <p className="text-red-500 text-xs">{fieldErrors.dob}</p>
-                )}
-              </label>
-            </div>
-            <div className="flex justify-end mt-4 space-x-2">
-              <button
-                onClick={
-                  selectedMember._id ? handleMemberSave : handleMemberCreate
-                }
-                className="bg-green-500 text-white p-2 rounded"
-              >
-                Save
-              </button>
-              <button
-                onClick={closeMemberModal}
-                className="bg-red-500 text-white p-2 rounded"
-              >
-                Cancel
-              </button>
+              </div>
+              <div className="flex justify-end mt-4 space-x-2">
+                <button
+                  onClick={handleCropSave}
+                  className="bg-green-500 text-white p-2 rounded text-sm sm:text-base"
+                >
+                  Save
+                </button>
+                <button
+                  onClick={closeModal}
+                  className="bg-red-500 text-white p-2 rounded text-sm sm:text-base"
+                >
+                  Close
+                </button>
+              </div>
             </div>
           </div>
-        </div>
-      )}
+        )}
 
-    </main >
+        {/* Member Modal */}
+        {isMemberModalOpen && selectedMember && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-30 p-4">
+            <div className="bg-white p-4 sm:p-6 rounded-lg shadow-2xl w-full max-w-sm sm:max-w-md md:max-w-lg lg:max-w-xl transform transition-all duration-300 ease-in-out max-h-[90vh] overflow-y-auto">
+              <div className="flex items-center justify-between mb-4 sm:mb-6">
+                <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-gray-800">
+                  {selectedMember._id ? "Edit Member Details" : "Add New Member"}
+                </h3>
+                <X
+                  size={20}
+                  color="red"
+                  onClick={closeMemberModal}
+                  className="hover:cursor-pointer"
+                />
+              </div>
+              
+              {/* Profile Image */}
+              {selectedMember.dp ? (
+                <img
+                  src={selectedMember.dp}
+                  alt="Profile"
+                  className="w-full h-32 sm:h-40 md:h-48 object-contain rounded-lg mb-4 cursor-pointer"
+                  onClick={() => document.getElementById("memberImageInput").click()}
+                />
+              ) : (
+                <div 
+                  className="w-full h-32 sm:h-40 md:h-48 border-2 border-dashed border-gray-300 rounded-lg mb-4 flex items-center justify-center cursor-pointer hover:border-gray-400"
+                  onClick={() => document.getElementById("memberImageInput").click()}
+                >
+                  <div className="text-center">
+                    <ImageUp size={32} className="sm:w-12 sm:h-12 text-gray-400 mx-auto mb-2" />
+                    <p className="text-sm sm:text-base text-gray-500">Click to upload image</p>
+                  </div>
+                </div>
+              )}
+              
+              {/* Profile Picture Field */}
+              {fieldErrors.dpFile && (
+                <p className="text-red-500 text-xs text-center mb-2">
+                  {fieldErrors.dpFile}
+                </p>
+              )}
+              <input
+                type="file"
+                id="memberImageInput"
+                style={{ display: "none" }}
+                onChange={(e) => {
+                  const file = e.target.files[0];
+                  if (file) {
+                    const imageUrl = URL.createObjectURL(file);
+                    setSelectedMember((prev) => ({
+                      ...prev,
+                      dp: imageUrl,
+                      dpFile: file,
+                    }));
+                  }
+                }}
+              />
+              
+              {/* Form Fields */}
+              <div className="space-y-3 sm:space-y-4">
+                {/* First Name Field */}
+                <label className="block text-gray-600">
+                  <strong className="text-sm sm:text-base">First Name:</strong>
+                  <input
+                    type="text"
+                    value={selectedMember.firstName}
+                    className="w-full p-2 sm:p-3 border rounded text-sm sm:text-base"
+                    onChange={(e) => {
+                      setSelectedMember((prev) => ({
+                        ...prev,
+                        firstName: e.target.value,
+                      }));
+                      setFieldErrors((prev) => ({ ...prev, firstName: null }));
+                    }}
+                  />
+                  {fieldErrors.firstName && (
+                    <p className="text-red-500 text-xs mt-1">
+                      {fieldErrors.firstName}
+                    </p>
+                  )}
+                </label>
+                
+                {/* Last Name Field */}
+                <label className="block text-gray-600">
+                  <strong className="text-sm sm:text-base">Last Name:</strong>
+                  <input
+                    type="text"
+                    value={selectedMember.lastName}
+                    className="w-full p-2 sm:p-3 border rounded text-sm sm:text-base"
+                    onChange={(e) => {
+                      setSelectedMember((prev) => ({
+                        ...prev,
+                        lastName: e.target.value,
+                      }));
+                      setFieldErrors((prev) => ({ ...prev, lastName: null }));
+                    }}
+                  />
+                  {fieldErrors.lastName && (
+                    <p className="text-red-500 text-xs mt-1">
+                      {fieldErrors.lastName}
+                    </p>
+                  )}
+                </label>
+                
+                {/* Address Field */}
+                <label className="block text-gray-600">
+                  <strong className="text-sm sm:text-base">Address:</strong>
+                  <input
+                    type="text"
+                    value={selectedMember.address}
+                    className="w-full p-2 sm:p-3 border rounded text-sm sm:text-base"
+                    onChange={(e) => {
+                      setSelectedMember((prev) => ({
+                        ...prev,
+                        address: e.target.value,
+                      }));
+                      setFieldErrors((prev) => ({ ...prev, address: null }));
+                    }}
+                  />
+                  {fieldErrors.address && (
+                    <p className="text-red-500 text-xs mt-1">
+                      {fieldErrors.address}
+                    </p>
+                  )}
+                </label>
+                
+                {/* Email Field */}
+                <label className="block text-gray-600">
+                  <strong className="text-sm sm:text-base">Email:</strong>
+                  <input
+                    type="email"
+                    value={selectedMember.email}
+                    className="w-full p-2 sm:p-3 border rounded text-sm sm:text-base"
+                    onChange={(e) => {
+                      setSelectedMember((prev) => ({
+                        ...prev,
+                        email: e.target.value,
+                      }));
+                      setFieldErrors((prev) => ({ ...prev, email: null }));
+                    }}
+                  />
+                  {fieldErrors.email && (
+                    <p className="text-red-500 text-xs mt-1">
+                      {fieldErrors.email}
+                    </p>
+                  )}
+                </label>
+                
+                {/* Phone Number Field */}
+                <label className="block text-gray-600">
+                  <strong className="text-sm sm:text-base">Phone Number:</strong>
+                  <input
+                    type="text"
+                    value={selectedMember.phoneNumber}
+                    className="w-full p-2 sm:p-3 border rounded text-sm sm:text-base"
+                    onChange={(e) => {
+                      setSelectedMember((prev) => ({
+                        ...prev,
+                        phoneNumber: e.target.value,
+                      }));
+                      setFieldErrors((prev) => ({
+                        ...prev,
+                        phoneNumber: null,
+                      }));
+                    }}
+                  />
+                  {fieldErrors.phoneNumber && (
+                    <p className="text-red-500 text-xs mt-1">
+                      {fieldErrors.phoneNumber}
+                    </p>
+                  )}
+                </label>
+                
+                {/* Date of Birth Field */}
+                <label className="block text-gray-600">
+                  <strong className="text-sm sm:text-base">Date of Birth:</strong>
+                  <input
+                    type="date"
+                    value={selectedMember.dob || ''}
+                    className="w-full p-2 sm:p-3 border rounded text-sm sm:text-base"
+                    onChange={(e) => {
+                      setSelectedMember((prev) => ({
+                        ...prev,
+                        dob: e.target.value,
+                      }));
+                      setFieldErrors((prev) => ({ ...prev, dob: null }));
+                    }}
+                  />
+                  {fieldErrors.dob && (
+                    <p className="text-red-500 text-xs mt-1">
+                      {fieldErrors.dob}
+                    </p>
+                  )}
+                </label>
+              </div>
+              
+              {/* Action Buttons */}
+              <div className="flex justify-end mt-4 sm:mt-6 space-x-2">
+                <button
+                  onClick={selectedMember._id ? handleMemberSave : handleMemberCreate}
+                  className="bg-green-500 text-white p-2 sm:p-3 rounded text-sm sm:text-base hover:bg-green-600 transition-colors"
+                >
+                  Save
+                </button>
+                <button
+                  onClick={closeMemberModal}
+                  className="bg-red-500 text-white p-2 sm:p-3 rounded text-sm sm:text-base hover:bg-red-600 transition-colors"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+      </main>
     </>
   );
 };

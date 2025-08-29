@@ -121,9 +121,12 @@ const Login = () => {
                                 </label>
                             </div>
                             <div className="text-sm">
-                                <a href="#" className="font-medium text-primary-600 hover:text-primary-500 transition-colors duration-200">
+                                <button
+                                    onClick={() => navigate('/forgot-password')}
+                                    className="font-medium text-primary-600 hover:text-primary-500 transition-colors duration-200"
+                                >
                                     Forgot password?
-                                </a>
+                                </button>
                             </div>
                         </div>
 

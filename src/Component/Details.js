@@ -21,6 +21,21 @@ const Details = () => {
         }
     }, [dispatch, id]);
 
+    // Function to format date of birth
+    const formatDateOfBirth = (dateString) => {
+        if (!dateString) return '';
+        try {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+        } catch (error) {
+            return dateString; // Return original string if parsing fails
+        }
+    };
+
     if (error) return (
         <div className="min-h-screen bg-gray-50 flex items-center justify-center">
             <div className="bg-red-50 border border-red-200 rounded-lg p-6 max-w-md w-full mx-4">
@@ -173,7 +188,7 @@ const Details = () => {
                                                 </div>
                                                 <div className="ml-4">
                                                     <p className="text-sm font-medium text-gray-500">Date of Birth</p>
-                                                    <p className="text-lg text-gray-900">{member.dob}</p>
+                                                    <p className="text-lg text-gray-900">{formatDateOfBirth(member.dob)}</p>
                                                 </div>
                                             </div>
                                         )}

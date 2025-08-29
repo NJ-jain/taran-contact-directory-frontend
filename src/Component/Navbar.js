@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { getUserThunk } from '../features/user/userSlice';
 import SearchResults from './SearchResults';
-import { LogOut, UserRound, Menu, X, Phone } from 'lucide-react';
+import { LogOut, UserRound, Menu, X, Phone, Home } from 'lucide-react';
 
 const Navbar = () => {
     const [menuOpen, setMenuOpen] = useState(false);
     const navigate = useNavigate();
+    const location = useLocation();
     const dispatch = useDispatch();
     const userData = useSelector((state) => state.user.data);
 
@@ -23,8 +24,13 @@ const Navbar = () => {
         setMenuOpen(false);
     };
 
+    // Check if user is on profile page
+    const isOnProfilePage = location.pathname === '/profile';
+    // Check if user is on home page (root path)
+    const isOnHomePage = location.pathname === '/';
+
     return (
-        <nav className="bg-white shadow-soft border-b border-gray-100 sticky top-0 z-50">
+        <nav className="bg-white shadow-soft border-b border-gray-100 sticky top-0">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex justify-between items-center h-16">
                     {/* Logo and Brand */}
@@ -56,13 +62,42 @@ const Navbar = () => {
                             </button>
                         ) : (
                             <div className="flex items-center space-x-3">
-                                <button
-                                    onClick={() => navigate('/profile')}
-                                    className="inline-flex items-center justify-center w-10 h-10 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-700 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
-                                    title="Profile"
-                                >
-                                    <UserRound className="w-5 h-5" />
-                                </button>
+                                {/* Show Home button when on profile page, Profile button when on home page */}
+                                {isOnProfilePage ? (
+                                    <button
+                                        onClick={() => navigate('/')}
+                                        className="inline-flex items-center justify-center w-10 h-10 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-700 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
+                                        title="Home"
+                                    >
+                                        <Home className="w-5 h-5" />
+                                    </button>
+                                ) : isOnHomePage ? (
+                                    <button
+                                        onClick={() => navigate('/profile')}
+                                        className="inline-flex items-center justify-center w-10 h-10 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-700 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
+                                        title="Profile"
+                                    >
+                                        <UserRound className="w-5 h-5" />
+                                    </button>
+                                ) : (
+                                    // Show both buttons when on other pages
+                                    <>
+                                        <button
+                                            onClick={() => navigate('/')}
+                                            className="inline-flex items-center justify-center w-10 h-10 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-700 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
+                                            title="Home"
+                                        >
+                                            <Home className="w-5 h-5" />
+                                        </button>
+                                        <button
+                                            onClick={() => navigate('/profile')}
+                                            className="inline-flex items-center justify-center w-10 h-10 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-700 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
+                                            title="Profile"
+                                        >
+                                            <UserRound className="w-5 h-5" />
+                                        </button>
+                                    </>
+                                )}
                                 <button
                                     onClick={handleLogout}
                                     className="inline-flex items-center px-3 py-2 border border-gray-300 text-sm font-medium rounded-lg text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-all duration-200"
@@ -111,16 +146,54 @@ const Navbar = () => {
                             </button>
                         ) : (
                             <>
-                                <button
-                                    onClick={() => {
-                                        navigate('/profile');
-                                        setMenuOpen(false);
-                                    }}
-                                    className="w-full text-left px-3 py-2 text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50 rounded-lg transition-colors duration-200 flex items-center"
-                                >
-                                    <UserRound className="w-5 h-5 mr-3" />
-                                    Profile
-                                </button>
+                                {/* Show Home button when on profile page, Profile button when on home page */}
+                                {isOnProfilePage ? (
+                                    <button
+                                        onClick={() => {
+                                            navigate('/');
+                                            setMenuOpen(false);
+                                        }}
+                                        className="w-full text-left px-3 py-2 text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50 rounded-lg transition-colors duration-200 flex items-center"
+                                    >
+                                        <Home className="w-5 h-5 mr-3" />
+                                        Home
+                                    </button>
+                                ) : isOnHomePage ? (
+                                    <button
+                                        onClick={() => {
+                                            navigate('/profile');
+                                            setMenuOpen(false);
+                                        }}
+                                        className="w-full text-left px-3 py-2 text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50 rounded-lg transition-colors duration-200 flex items-center"
+                                    >
+                                        <UserRound className="w-5 h-5 mr-3" />
+                                        Profile
+                                    </button>
+                                ) : (
+                                    // Show both buttons when on other pages
+                                    <>
+                                        <button
+                                            onClick={() => {
+                                                navigate('/');
+                                                setMenuOpen(false);
+                                            }}
+                                            className="w-full text-left px-3 py-2 text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50 rounded-lg transition-colors duration-200 flex items-center"
+                                        >
+                                            <Home className="w-5 h-5 mr-3" />
+                                            Home
+                                        </button>
+                                        <button
+                                            onClick={() => {
+                                                navigate('/profile');
+                                                setMenuOpen(false);
+                                            }}
+                                            className="w-full text-left px-3 py-2 text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50 rounded-lg transition-colors duration-200 flex items-center"
+                                        >
+                                            <UserRound className="w-5 h-5 mr-3" />
+                                            Profile
+                                        </button>
+                                    </>
+                                )}
                                 <button
                                     onClick={handleLogout}
                                     className="w-full text-left px-3 py-2 text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50 rounded-lg transition-colors duration-200 flex items-center"

@@ -11,6 +11,8 @@ import Details from './Component/Details';
 import Profile from './Component/Profile';
 import Admin from './Component/admin';
 import AdminProtectedRoute from './Component/AdminProtectedRoute';
+import ForgotPasswordEmail from './Component/ForgotPasswordEmail';
+import ForgotPasswordOTP from './Component/ForgotPasswordOTP';
 
 function App() {
   return (
@@ -20,6 +22,8 @@ function App() {
           <Route path="/" index element={<Dashboard />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/forgot-password" element={<ForgotPasswordEmail />} />
+          <Route path="/forgot-password-otp" element={<ForgotPasswordOTP />} />
           <Route path="/admin/login" element={<AdminLogin />} />
           <Route path="/admin/register" element={<AdminRegister />} />
           <Route path='/details/:id' element={<Details />} />
@@ -32,8 +36,41 @@ function App() {
               </ProtectedRoute>
             }
           />
+          {/* Admin Routes */}
           <Route
             path="/admin"
+            element={
+                <AdminProtectedRoute>
+                    <Admin />
+                </AdminProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/users"
+            element={
+                <AdminProtectedRoute>
+                    <Admin />
+                </AdminProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/members"
+            element={
+                <AdminProtectedRoute>
+                    <Admin />
+                </AdminProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/members/:userId"
+            element={
+                <AdminProtectedRoute>
+                    <Admin />
+                </AdminProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/settings"
             element={
                 <AdminProtectedRoute>
                     <Admin />
