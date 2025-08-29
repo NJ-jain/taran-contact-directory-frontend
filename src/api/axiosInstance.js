@@ -4,8 +4,14 @@ axios.interceptors.request.use(
     async (config) => {
         let token = localStorage.getItem("authorization");
         config.headers['authorization'] = token;
+        
+        // Add CORS headers to all requests
+        config.headers['Access-Control-Allow-Origin'] = '*';
+        config.headers['Access-Control-Allow-Methods'] = 'GET, POST, PUT, DELETE, OPTIONS';
+        config.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization';
+        
         if (process.env.NEXT_PUBLIC_ENV === 'local')
-            config.headers['authorization'] = localStorage.getItem("authorization");
+            config.headers['authorization'] = token;
         return config;
     },
     (error) => {

@@ -22,12 +22,29 @@ export const registerAdminUser = async (userData) => {
 
 // New loginUser function
 export const loginUser = async (userData) => {
-    const response = await axios.post(`${BASE_URL}/login`, userData, {
-        headers: {
-            'Content-Type': 'application/json'
+    try {
+        const response = await axios.post(`${BASE_URL}/login`, userData, {
+            headers: {
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+                'Access-Control-Allow-Headers': 'Content-Type, Authorization'
+            },
+            withCredentials: false
+        });
+        return response.data;
+    } catch (error) {
+        if (error.response) {
+            // Server responded with error status
+            throw new Error(`Login failed: ${error.response.data?.message || error.response.statusText}`);
+        } else if (error.request) {
+            // Request was made but no response received (CORS issue)
+            throw new Error('Network error: Unable to reach the server. Please check your connection or contact support.');
+        } else {
+            // Something else happened
+            throw new Error(`Login error: ${error.message}`);
         }
-    });
-    return response.data;
+    }
 };
 export const loginUserAdmin = async (userData) => {
     const response = await axios.post(`${BASE_URL_ADMIN}/admin-login`, userData, {
