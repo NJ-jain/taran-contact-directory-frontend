@@ -38,7 +38,6 @@ export const createAxiosConfig = (endpoint, data = null, method = 'GET') => {
             'Content-Type': 'application/json',
             'Access-Control-Allow-Origin': '*',
             'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-            'Access-Control-Allow-Headers': 'Content-Type, Authorization'
         },
         timeout: API_CONFIG.TIMEOUT,
         withCredentials: false
