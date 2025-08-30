@@ -25,12 +25,8 @@ export const loginUser = async (userData) => {
     try {
         const response = await axios.post(`${BASE_URL}/login`, userData, {
             headers: {
-                'Content-Type': 'application/json',
-                'Access-Control-Allow-Origin': '*',
-                'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-                'Access-Control-Allow-Headers': 'Content-Type, Authorization'
-            },
-            withCredentials: false
+                'Content-Type': 'application/json'
+            }
         });
         return response.data;
     } catch (error) {
@@ -57,30 +53,60 @@ export const loginUserAdmin = async (userData) => {
 
 // Forgot password - send OTP
 export const forgotPassword = async (email) => {
-    const response = await axios.post(`${BASE_URL}/forgot-password`, { email }, {
-        headers: {
-            'Content-Type': 'application/json'
+    try {
+        const response = await axios.post(`${BASE_URL}/forgot-password`, { email }, {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        return response.data;
+    } catch (error) {
+        if (error.response) {
+            throw new Error(`Forgot password failed: ${error.response.data?.message || error.response.statusText}`);
+        } else if (error.request) {
+            throw new Error('Network error: Unable to reach the server. Please check your connection or contact support.');
+        } else {
+            throw new Error(`Forgot password error: ${error.message}`);
         }
-    });
-    return response.data;
+    }
 };
 
 // Verify OTP and reset password
 export const resetPassword = async (resetData) => {
-    const response = await axios.post(`${BASE_URL}/verify-otp`, resetData, {
-        headers: {
-            'Content-Type': 'application/json'
+    try {
+        const response = await axios.post(`${BASE_URL}/verify-otp`, resetData, {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        return response.data;
+    } catch (error) {
+        if (error.response) {
+            throw new Error(`Reset password failed: ${error.response.data?.message || error.response.statusText}`);
+        } else if (error.request) {
+            throw new Error('Network error: Unable to reach the server. Please check your connection or contact support.');
+        } else {
+            throw new Error(`Reset password error: ${error.message}`);
         }
-    });
-    return response.data;
+    }
 };
 
 // Send OTP (alternative endpoint)
 export const sendOTP = async (email) => {
-    const response = await axios.post(`${BASE_URL}/send-otp`, { email }, {
-        headers: {
-            'Content-Type': 'application/json'
+    try {
+        const response = await axios.post(`${BASE_URL}/send-otp`, { email }, {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        return response.data;
+    } catch (error) {
+        if (error.response) {
+            throw new Error(`Send OTP failed: ${error.response.data?.message || error.response.statusText}`);
+        } else if (error.request) {
+            throw new Error('Network error: Unable to reach the server. Please check your connection or contact support.');
+        } else {
+            throw new Error(`Send OTP error: ${error.message}`);
         }
-    });
-    return response.data;
+    }
 };
