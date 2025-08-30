@@ -112,14 +112,14 @@ const Profile = () => {
       errors.address = "Address is required.";
       formIsValid = false;
     }
-    // if (!selectedMember.email) {
-    //   errors.email = "Email is required.";
-    //   formIsValid = false;
-    // }
-    // if (!selectedMember.phoneNumber) {
-    //   errors.phoneNumber = "Phone number is required.";
-    //   formIsValid = false;
-    // }
+    if (!selectedMember.email) {
+      errors.email = "Email is required.";
+      formIsValid = false;
+    }
+    if (!selectedMember.phoneNumber) {
+      errors.phoneNumber = "Phone number is required.";
+      formIsValid = false;
+    }
     if (!selectedMember.dob) {
       errors.dob = "Date of birth is required.";
       formIsValid = false;
