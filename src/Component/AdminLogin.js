@@ -87,12 +87,12 @@ const AdminLogin = () => {
                     </button>
                     {error && <p className="text-red-500 mt-2">{error.message}</p>}
                 </form>
-                <div className="mt-6 text-center">
+                {/* <div className="mt-6 text-center">
                     <p className="text-gray-600">Don't have an admin account?</p>
                     <p className="text-green-500 hover:underline cursor-pointer mt-2" onClick={() => navigate('/admin/register')}>
                         Register as Admin
                     </p>
-                </div>
+                </div> */}
             </div>
         </div>
     );
