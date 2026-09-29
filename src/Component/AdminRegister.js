@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { registerAdminThunk } from '../features/auth/authSlice';
+import { ShieldCheck, Lock, Mail, User, KeyRound } from 'lucide-react';
 
 const AdminRegister = () => {
     const navigate = useNavigate();
@@ -9,20 +10,33 @@ const AdminRegister = () => {
     const { loading, error } = useSelector((state) => state.auth);
 
     const [formData, setFormData] = useState({
+        username: '',
         email: '',
         password: '',
-        aboutUs: ''
+        adminSecretKey: ''
     });
+
+    const [validationError, setValidationError] = useState('');
 
     const handleChange = (e) => {
         setFormData({
             ...formData,
             [e.target.name]: e.target.value
         });
+        setValidationError('');
     };
 
     const handleSubmit = (e) => {
         e.preventDefault();
+        if (!formData.username || !formData.email || !formData.password) {
+            setValidationError('Please fill in all required fields');
+            return;
+        }
+        if (formData.password.length < 8) {
+            setValidationError('Password must be at least 8 characters');
+            return;
+        }
+
         dispatch(registerAdminThunk(formData)).then((result) => {
             if (registerAdminThunk.fulfilled.match(result)) {
                 navigate('/admin');
@@ -31,66 +45,131 @@ const AdminRegister = () => {
     };
 
     return (
-        <div className="bg-sky-100 flex justify-center items-center h-screen">
-            <div className="w-1/2 h-screen hidden lg:block">
-                <img src="https://img.freepik.com/fotos-premium/imagen-fondo_910766-187.jpg?w=826" alt="Placeholder Image" className="object-cover w-full h-full" />
-            </div>
-            <div className="lg:p-36 md:p-52 sm:20 p-8 w-full lg:w-1/2">
-                <h1 className="text-2xl font-semibold mb-4">Admin Registration</h1>
-                <form onSubmit={handleSubmit}>
-                    <div className="mb-4 bg-sky-100">
-                        <label htmlFor="email" className="block text-gray-600">Email Address</label>
-                        <input 
-                            type="email" 
-                            id="email" 
-                            name="email" 
-                            value={formData.email} 
-                            onChange={handleChange} 
-                            className="w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:border-blue-500" 
-                            autoComplete="off" 
-                        />
+        <div className="min-h-screen bg-slate-900 flex justify-center items-center p-4">
+            <div className="bg-slate-800 border border-slate-700 rounded-2xl shadow-2xl p-8 w-full max-w-md text-white">
+                <div className="flex items-center space-x-3 mb-6">
+                    <div className="p-3 bg-purple-600/20 text-purple-400 rounded-xl">
+                        <ShieldCheck className="w-8 h-8" />
                     </div>
-                    <div className="mb-4">
-                        <label htmlFor="password" className="block text-gray-800">Password</label>
-                        <input 
-                            type="password" 
-                            id="password" 
-                            name="password" 
-                            value={formData.password} 
-                            onChange={handleChange} 
-                            className="w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:border-blue-500" 
-                            autoComplete="off" 
-                        />
+                    <div>
+                        <h1 className="text-2xl font-bold tracking-tight">Admin Registration</h1>
+                        <p className="text-xs text-slate-400">Authorized personnel only</p>
                     </div>
-                    <div className="mb-4">
-                        <label htmlFor="aboutUs" className="block text-gray-800">About</label>
-                        <textarea
-                            id="aboutUs"
-                            name="aboutUs"
-                            value={formData.aboutUs}
-                            onChange={handleChange}
-                            className="w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:border-blue-500"
-                            rows="4"
-                        />
+                </div>
+
+                {validationError && (
+                    <div className="mb-4 p-3 bg-red-500/10 border border-red-500/30 text-red-400 text-sm rounded-lg">
+                        {validationError}
                     </div>
+                )}
+
+                {error && (
+                    <div className="mb-4 p-3 bg-red-500/10 border border-red-500/30 text-red-400 text-sm rounded-lg">
+                        {typeof error === 'string' ? error : error?.message || 'Registration failed'}
+                    </div>
+                )}
+
+                <form onSubmit={handleSubmit} className="space-y-4">
+                    <div>
+                        <label htmlFor="username" className="block text-sm font-medium text-slate-300 mb-1">
+                            Admin Username
+                        </label>
+                        <div className="relative">
+                            <User className="w-5 h-5 absolute left-3 top-2.5 text-slate-400" />
+                            <input 
+                                type="text" 
+                                id="username" 
+                                name="username" 
+                                value={formData.username} 
+                                onChange={handleChange} 
+                                required
+                                placeholder="Admin Name"
+                                className="w-full bg-slate-900/60 border border-slate-700 rounded-xl py-2 pl-10 pr-4 text-white placeholder-slate-500 focus:outline-none focus:border-purple-500" 
+                            />
+                        </div>
+                    </div>
+
+                    <div>
+                        <label htmlFor="email" className="block text-sm font-medium text-slate-300 mb-1">
+                            Email Address
+                        </label>
+                        <div className="relative">
+                            <Mail className="w-5 h-5 absolute left-3 top-2.5 text-slate-400" />
+                            <input 
+                                type="email" 
+                                id="email" 
+                                name="email" 
+                                value={formData.email} 
+                                onChange={handleChange} 
+                                required
+                                placeholder="admin@domain.com"
+                                className="w-full bg-slate-900/60 border border-slate-700 rounded-xl py-2 pl-10 pr-4 text-white placeholder-slate-500 focus:outline-none focus:border-purple-500" 
+                            />
+                        </div>
+                    </div>
+
+                    <div>
+                        <label htmlFor="password" className="block text-sm font-medium text-slate-300 mb-1">
+                            Password (min 8 chars)
+                        </label>
+                        <div className="relative">
+                            <Lock className="w-5 h-5 absolute left-3 top-2.5 text-slate-400" />
+                            <input 
+                                type="password" 
+                                id="password" 
+                                name="password" 
+                                value={formData.password} 
+                                onChange={handleChange} 
+                                required
+                                placeholder="••••••••"
+                                className="w-full bg-slate-900/60 border border-slate-700 rounded-xl py-2 pl-10 pr-4 text-white placeholder-slate-500 focus:outline-none focus:border-purple-500" 
+                            />
+                        </div>
+                    </div>
+
+                    <div>
+                        <label htmlFor="adminSecretKey" className="block text-sm font-medium text-slate-300 mb-1">
+                            Registration Secret Key
+                        </label>
+                        <div className="relative">
+                            <KeyRound className="w-5 h-5 absolute left-3 top-2.5 text-purple-400" />
+                            <input 
+                                type="password" 
+                                id="adminSecretKey" 
+                                name="adminSecretKey" 
+                                value={formData.adminSecretKey} 
+                                onChange={handleChange} 
+                                placeholder="Enter system admin key"
+                                className="w-full bg-slate-900/60 border border-slate-700 rounded-xl py-2 pl-10 pr-4 text-white placeholder-slate-500 focus:outline-none focus:border-purple-500" 
+                            />
+                        </div>
+                        <p className="text-xs text-slate-400 mt-1">Configured in backend as ADMIN_REGISTRATION_SECRET</p>
+                    </div>
+
                     <button 
                         type="submit" 
-                        className="bg-purple-500 hover:bg-purple-600 text-white font-semibold rounded-md py-2 px-4 w-full" 
                         disabled={loading}
+                        className="w-full mt-2 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-semibold rounded-xl py-2.5 px-4 transition-all duration-150 disabled:opacity-50"
                     >
-                        {loading ? 'Registering...' : 'Register as Admin'}
+                        {loading ? 'Creating Admin Account...' : 'Register as Admin'}
                     </button>
-                    {error && <p className="text-red-500 mt-2">{error?.message}</p>}
                 </form>
-                <div className="mt-6 text-center">
-                    <p className="text-gray-600">Already have an admin account?</p>
-                    <p className="text-green-500 hover:underline cursor-pointer mt-2" onClick={() => navigate('/admin/login')}>
-                        Login as Admin
+
+                <div className="mt-6 text-center border-t border-slate-700/60 pt-4">
+                    <p className="text-sm text-slate-400">
+                        Already have an admin account?{' '}
+                        <button 
+                            type="button"
+                            onClick={() => navigate('/admin/login')}
+                            className="text-purple-400 hover:text-purple-300 font-medium hover:underline"
+                        >
+                            Log In
+                        </button>
                     </p>
                 </div>
             </div>
         </div>
     );
-}
+};
 
-export default AdminRegister; 
+export default AdminRegister;

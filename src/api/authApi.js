@@ -1,112 +1,47 @@
 import axios from 'axios';
+import { getBackendUrl } from './apiConfig';
 
-const BASE_URL = `${process.env.REACT_APP_BACKEND_URL}/auth`;
-const BASE_URL_ADMIN = `${process.env.REACT_APP_BACKEND_URL}/admin`;
+const getAuthBaseUrl = () => `${getBackendUrl()}/auth`;
+const getAdminBaseUrl = () => `${getBackendUrl()}/admin`;
 
 export const registerUser = async (userData) => {
-    const response = await axios.post(`${BASE_URL}/register`, userData, {
-        headers: {
-            'Content-Type': 'application/json'
-        }
-    });
-    return response.data;
-};
-export const registerAdminUser = async (userData) => {
-    const response = await axios.post(`${BASE_URL_ADMIN}/create-admin`, userData, {
-        headers: {
-            'Content-Type': 'application/json'
-        }
-    });
+    const response = await axios.post(`${getAuthBaseUrl()}/register`, userData);
     return response.data;
 };
 
-// New loginUser function
-export const loginUser = async (userData) => {
-    try {
-        const response = await axios.post(`${BASE_URL}/login`, userData, {
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        });
-        return response.data;
-    } catch (error) {
-        if (error.response) {
-            // Server responded with error status
-            throw new Error(`Login failed: ${error.response.data?.message || error.response.statusText}`);
-        } else if (error.request) {
-            // Request was made but no response received (CORS issue)
-            throw new Error('Network error: Unable to reach the server. Please check your connection or contact support.');
-        } else {
-            // Something else happened
-            throw new Error(`Login error: ${error.message}`);
-        }
+export const registerAdminUser = async (userData) => {
+    const headers = { 'Content-Type': 'application/json' };
+    if (userData.adminSecretKey) {
+        headers['x-admin-secret-key'] = userData.adminSecretKey;
     }
+    const response = await axios.post(`${getAdminBaseUrl()}/create-admin`, userData, { headers });
+    return response.data;
 };
+
+export const loginUser = async (userData) => {
+    const response = await axios.post(`${getAuthBaseUrl()}/login`, userData);
+    return response.data;
+};
+
 export const loginUserAdmin = async (userData) => {
-    const response = await axios.post(`${BASE_URL_ADMIN}/admin-login`, userData, {
-        headers: {
-            'Content-Type': 'application/json'
-        }
-    });
+    const response = await axios.post(`${getAdminBaseUrl()}/admin-login`, userData);
     return response.data;
 };
 
 // Forgot password - send OTP
 export const forgotPassword = async (email) => {
-    try {
-        const response = await axios.post(`${BASE_URL}/forgot-password`, { email }, {
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        });
-        return response.data;
-    } catch (error) {
-        if (error.response) {
-            throw new Error(`Forgot password failed: ${error.response.data?.message || error.response.statusText}`);
-        } else if (error.request) {
-            throw new Error('Network error: Unable to reach the server. Please check your connection or contact support.');
-        } else {
-            throw new Error(`Forgot password error: ${error.message}`);
-        }
-    }
+    const response = await axios.post(`${getAuthBaseUrl()}/forgot-password`, { email });
+    return response.data;
 };
 
 // Verify OTP and reset password
 export const resetPassword = async (resetData) => {
-    try {
-        const response = await axios.post(`${BASE_URL}/verify-otp`, resetData, {
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        });
-        return response.data;
-    } catch (error) {
-        if (error.response) {
-            throw new Error(`Reset password failed: ${error.response.data?.message || error.response.statusText}`);
-        } else if (error.request) {
-            throw new Error('Network error: Unable to reach the server. Please check your connection or contact support.');
-        } else {
-            throw new Error(`Reset password error: ${error.message}`);
-        }
-    }
+    const response = await axios.post(`${getAuthBaseUrl()}/verify-otp`, resetData);
+    return response.data;
 };
 
 // Send OTP (alternative endpoint)
 export const sendOTP = async (email) => {
-    try {
-        const response = await axios.post(`${BASE_URL}/send-otp`, { email }, {
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        });
-        return response.data;
-    } catch (error) {
-        if (error.response) {
-            throw new Error(`Send OTP failed: ${error.response.data?.message || error.response.statusText}`);
-        } else if (error.request) {
-            throw new Error('Network error: Unable to reach the server. Please check your connection or contact support.');
-        } else {
-            throw new Error(`Send OTP error: ${error.message}`);
-        }
-    }
+    const response = await axios.post(`${getAuthBaseUrl()}/send-otp`, { email });
+    return response.data;
 };

@@ -1,30 +1,32 @@
-import apiInstance from './axiosInstance'; // Import the axios instance
+import apiInstance from './axiosInstance';
+import { getBackendUrl } from './apiConfig';
 
-const BASE_URL = `${process.env.REACT_APP_BACKEND_URL}/user`;
+const getUserBaseUrl = () => `${getBackendUrl()}/user`;
 
 export const getUser = async () => {
-    const response = await apiInstance.get(`${BASE_URL}/users`);
+    const response = await apiInstance.get(`${getUserBaseUrl()}/users`);
     return response.data;
 };
+
 export const updateUser = async (userData) => {
     let data;
-    let headers = {};
 
     if (userData.bannerImage) {
         const formData = new FormData();
-        formData.append('name', userData.name);
-        formData.append('bannerImage', userData.bannerImage); // Append the File object directly
+        if (userData.name) formData.append('name', userData.name);
+        if (userData.aboutUs) formData.append('aboutUs', userData.aboutUs);
+        if (userData.category) formData.append('category', userData.category);
+        formData.append('bannerImage', userData.bannerImage);
         data = formData;
-        headers['Content-Type'] = 'multipart/form-data';
     } else {
         data = userData;
     }
 
-    const response = await apiInstance.put(`${BASE_URL}/users`, data, { headers });
+    const response = await apiInstance.put(`${getUserBaseUrl()}/users`, data);
     return response.data;
 };
 
-
 export const approvalRequestApi = async () => {
-    await apiInstance.post(`${BASE_URL}/admin-approval-request`);
-}
+    const response = await apiInstance.post(`${getUserBaseUrl()}/admin-approval-request`);
+    return response.data;
+};
