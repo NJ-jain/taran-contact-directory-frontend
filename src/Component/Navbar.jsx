@@ -13,7 +13,8 @@ const Navbar = () => {
     const location = useLocation();
     const dispatch = useDispatch();
     const userData = useSelector((state) => state.user.data);
-    const isAuthenticated = !!localStorage.getItem('authorization');
+    const authUser = useSelector((state) => state.auth.user);
+    const isAuthenticated = !!localStorage.getItem('authorization') || !!authUser;
 
     useEffect(() => {
         if (!userData && isAuthenticated) {
@@ -24,18 +25,18 @@ const Navbar = () => {
     const handleLogout = () => {
         dispatch(logout());
         dispatch(clearUserState());
-        navigate('/login');
+        navigate('/');
         setMenuOpen(false);
     };
 
     const isOnProfilePage = location.pathname === '/profile';
     const isOnHomePage = location.pathname === '/';
 
-    // Find primary member name if exists
-    const primaryMember = userData?.membersArray?.[0];
+    // Find primary member name if exists (supports both user account and phone OTP login)
+    const primaryMember = authUser?.member || userData?.membersArray?.[0];
     const userDisplayName = primaryMember
-        ? `${primaryMember.firstName} ${primaryMember.lastName}`
-        : userData?.email?.split('@')[0] || 'User';
+        ? `${primaryMember.firstName} ${primaryMember.lastName}`.trim()
+        : userData?.email?.split('@')[0] || authUser?.user?.email?.split('@')[0] || 'Member';
 
     return (
         <nav className="bg-white/90 backdrop-blur-md border-b border-gray-100 sticky top-0 z-40 transition-all">
@@ -64,9 +65,11 @@ const Navbar = () => {
 
                     {/* Desktop Navigation */}
                     <div className="hidden md:flex items-center space-x-5">
-                        <div className="relative w-64 lg:w-72">
-                            <SearchResults />
-                        </div>
+                        {isAuthenticated && (
+                            <div className="relative w-64 lg:w-72">
+                                <SearchResults />
+                            </div>
+                        )}
 
                         {!isAuthenticated ? (
                             <div className="flex items-center space-x-3">
@@ -159,9 +162,11 @@ const Navbar = () => {
             {menuOpen && (
                 <div className="md:hidden animate-slide-up border-t border-gray-100 bg-white shadow-xl">
                     <div className="px-4 pt-3 pb-4 space-y-2">
-                        <div className="py-2">
-                            <SearchResults />
-                        </div>
+                        {isAuthenticated && (
+                            <div className="py-2">
+                                <SearchResults />
+                            </div>
+                        )}
 
                         {!isAuthenticated ? (
                             <div className="space-y-2 pt-2 border-t border-gray-100">

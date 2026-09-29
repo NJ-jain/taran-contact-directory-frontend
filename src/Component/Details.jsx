@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { getMemberThunk, clearMemberDetails } from "../features/member/memberSlice";
 import Navbar from "./Navbar";
 import Avatar from "./Avatar";
+import PhoneAuthGate from "./PhoneAuthGate";
 import { 
   Phone, 
   Mail, 
@@ -16,7 +17,8 @@ import {
   Copy, 
   Check, 
   ExternalLink,
-  Building
+  Building,
+  Lock
 } from 'lucide-react';
 
 const CATEGORY_LABELS = {
@@ -35,6 +37,8 @@ const Details = () => {
   const memberState = useSelector((state) => state.member.member);
   const loading = useSelector((state) => state.member.loading);
   const error = useSelector((state) => state.member.error);
+  const authUser = useSelector((state) => state.auth.user);
+  const isAuthenticated = !!localStorage.getItem('authorization') || !!authUser;
 
   const [copiedField, setCopiedField] = useState(null);
 
@@ -42,13 +46,13 @@ const Details = () => {
   const member = memberState?.member || memberState || {};
 
   useEffect(() => {
-    if (id) {
+    if (id && isAuthenticated) {
       dispatch(getMemberThunk({ id }));
     }
     return () => {
       dispatch(clearMemberDetails());
     };
-  }, [dispatch, id]);
+  }, [dispatch, id, isAuthenticated]);
 
   const copyToClipboard = (text, fieldName) => {
     if (!text) return;
@@ -90,8 +94,27 @@ const Details = () => {
           </div>
         )}
 
-        {/* Error State */}
-        {error && !loading && (
+        {!isAuthenticated ? (
+          <div className="max-w-xl mx-auto px-4 py-12">
+            <div className="text-center mb-6">
+              <div className="w-12 h-12 rounded-2xl bg-amber-100 text-amber-600 flex items-center justify-center mx-auto mb-3">
+                <Lock className="w-6 h-6" />
+              </div>
+              <h2 className="text-xl font-bold text-gray-900">Protected Member Profile</h2>
+              <p className="text-xs text-gray-500 mt-1 max-w-sm mx-auto">
+                To view this member's contact details, phone number, and address, please verify your registered community phone number.
+              </p>
+            </div>
+            <PhoneAuthGate
+              onSuccess={() => dispatch(getMemberThunk({ id }))}
+              title="Member Verification"
+              subtitle="Verify your number to view contact details"
+            />
+          </div>
+        ) : (
+          <>
+            {/* Error State */}
+            {error && !loading && (
           <div className="max-w-2xl mx-auto px-4 pt-12">
             <div className="bg-red-50 border border-red-200 rounded-2xl p-6 text-center shadow-xs">
               <h3 className="text-base font-bold text-red-900">Contact Not Found</h3>
@@ -369,6 +392,8 @@ const Details = () => {
             </div>
           </>
         )}
+      </>
+    )}
       </div>
     </>
   );

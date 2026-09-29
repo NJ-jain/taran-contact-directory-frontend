@@ -1,4 +1,3 @@
-import axios from 'axios';
 import apiInstance from './axiosInstance';
 import { getBackendUrl } from './apiConfig';
 
@@ -10,12 +9,12 @@ export const createMember = async (memberData) => {
 };
 
 export const getAllMembers = async () => {
-    const response = await axios.get(getMembersBaseUrl());
+    const response = await apiInstance.get(getMembersBaseUrl());
     return response.data;
 };
 
 export const getMember = async (memberId) => {
-    const response = await axios.get(`${getMembersBaseUrl()}/${memberId}`);
+    const response = await apiInstance.get(`${getMembersBaseUrl()}/${memberId}`);
     return response.data;
 };
 
@@ -26,6 +25,6 @@ export const updateMember = async (memberId, memberData) => {
 
 export const searchMembers = async (searchQuery) => {
     const safeParam = encodeURIComponent(searchQuery || '');
-    const response = await axios.get(`${getMembersBaseUrl()}/search?q=${safeParam}`);
+    const response = await apiInstance.get(`${getMembersBaseUrl()}/search?q=${safeParam}`);
     return response.data;
 };

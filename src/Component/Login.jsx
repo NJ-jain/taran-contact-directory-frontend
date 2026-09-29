@@ -2,12 +2,14 @@ import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { loginUserThunk } from '../features/auth/authSlice';
-import { Eye, EyeOff, Mail, Lock, Phone, ArrowRight } from 'lucide-react';
+import PhoneAuthGate from './PhoneAuthGate';
+import { Eye, EyeOff, Mail, Lock, Phone, ArrowRight, ShieldCheck } from 'lucide-react';
 
 const Login = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const { loading, error } = useSelector((state) => state.auth);
+    const [loginMode, setLoginMode] = useState('phone'); // 'phone' | 'email'
     const [showPassword, setShowPassword] = useState(false);
 
     const [formData, setFormData] = useState({
@@ -30,29 +32,69 @@ const Login = () => {
         e.preventDefault();
         dispatch(loginUserThunk(formData)).then((result) => {
             if (loginUserThunk.fulfilled.match(result)) {
-                navigate('/profile');
+                navigate('/');
             }
         });
     };
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-primary-50 via-white to-primary-100 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-            <div className="max-w-md w-full space-y-8">
+            <div className="max-w-md w-full space-y-6">
                 {/* Header */}
                 <div className="text-center">
-                    <div className="mx-auto h-16 w-16 bg-primary-500 rounded-full flex items-center justify-center shadow-medium">
+                    <div 
+                        onClick={() => navigate('/')} 
+                        className="mx-auto h-16 w-16 bg-gradient-to-tr from-primary-600 to-indigo-600 rounded-2xl flex items-center justify-center shadow-medium cursor-pointer hover:scale-105 transition-transform"
+                    >
                         <Phone className="h-8 w-8 text-white" />
                     </div>
-                    <h2 className="mt-6 text-3xl font-bold text-gray-900">
-                        Welcome back
+                    <h2 className="mt-4 text-3xl font-extrabold text-gray-900 tracking-tight">
+                        Taran Directory Sign In
                     </h2>
-                    <p className="mt-2 text-sm text-gray-600">
-                        Sign in to your account to continue
+                    <p className="mt-1.5 text-sm text-gray-600">
+                        {loginMode === 'phone' 
+                            ? 'Verify with your registered community mobile number' 
+                            : 'Sign in to your account with email and password'}
                     </p>
                 </div>
 
-                {/* Form */}
-                <div className="bg-white rounded-xl shadow-soft border border-gray-100 p-8">
+                {/* Tab Switcher */}
+                <div className="flex bg-gray-200/70 p-1.5 rounded-2xl shadow-inner">
+                    <button
+                        type="button"
+                        onClick={() => setLoginMode('phone')}
+                        className={`flex-1 py-2.5 px-3 rounded-xl text-xs sm:text-sm font-semibold transition-all flex items-center justify-center space-x-1.5 ${
+                            loginMode === 'phone'
+                                ? 'bg-white text-primary-700 shadow-sm'
+                                : 'text-gray-600 hover:text-gray-900'
+                        }`}
+                    >
+                        <Phone className="w-4 h-4" />
+                        <span>Member Phone (OTP)</span>
+                    </button>
+                    <button
+                        type="button"
+                        onClick={() => setLoginMode('email')}
+                        className={`flex-1 py-2.5 px-3 rounded-xl text-xs sm:text-sm font-semibold transition-all flex items-center justify-center space-x-1.5 ${
+                            loginMode === 'email'
+                                ? 'bg-white text-primary-700 shadow-sm'
+                                : 'text-gray-600 hover:text-gray-900'
+                        }`}
+                    >
+                        <Mail className="w-4 h-4" />
+                        <span>Email & Password</span>
+                    </button>
+                </div>
+
+                {/* Mode Content */}
+                {loginMode === 'phone' ? (
+                    <PhoneAuthGate
+                        onSuccess={() => navigate('/')}
+                        title="Member Access"
+                        subtitle="Enter your 10-digit registered number"
+                    />
+                ) : (
+                    <div className="bg-white rounded-2xl shadow-soft border border-gray-100 p-8">
                     <form className="space-y-6" onSubmit={handleSubmit}>
                         {/* Email Field */}
                         <div>
@@ -193,6 +235,16 @@ const Login = () => {
                             Admin Login
                         </button>
                     </div>
+                </div>
+                )}
+
+                <div className="text-center pt-2">
+                    <button
+                        onClick={() => navigate('/')}
+                        className="text-xs font-semibold text-gray-500 hover:text-primary-600 transition-colors"
+                    >
+                        ← Back to Community Directory
+                    </button>
                 </div>
             </div>
         </div>

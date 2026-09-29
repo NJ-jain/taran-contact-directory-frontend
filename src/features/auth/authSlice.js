@@ -5,8 +5,34 @@ import {
     registerAdminUser, 
     loginUserAdmin, 
     forgotPassword, 
-    resetPassword 
+    resetPassword,
+    sendPhoneOtpApi,
+    verifyPhoneOtpApi
 } from '../../api/authApi';
+
+export const sendPhoneOtpThunk = createAsyncThunk(
+    'auth/sendPhoneOtp',
+    async (phoneNumber, { rejectWithValue }) => {
+        try {
+            const response = await sendPhoneOtpApi(phoneNumber);
+            return response;
+        } catch (error) {
+            return rejectWithValue(error.response?.data || { message: error.message || 'Failed to send OTP' });
+        }
+    }
+);
+
+export const verifyPhoneOtpThunk = createAsyncThunk(
+    'auth/verifyPhoneOtp',
+    async ({ phoneNumber, otp }, { rejectWithValue }) => {
+        try {
+            const response = await verifyPhoneOtpApi({ phoneNumber, otp });
+            return response;
+        } catch (error) {
+            return rejectWithValue(error.response?.data || { message: error.message || 'Verification failed' });
+        }
+    }
+);
 
 export const registerUserThunk = createAsyncThunk(
     'auth/registerUser',
@@ -88,6 +114,8 @@ const authSlice = createSlice({
         error: null,
         forgotPasswordSuccess: false,
         resetPasswordSuccess: false,
+        phoneOtpSent: false,
+        phoneOtpData: null,
     },
     reducers: {
         clearForgotPasswordState: (state) => {
@@ -98,15 +126,60 @@ const authSlice = createSlice({
             state.resetPasswordSuccess = false;
             state.error = null;
         },
+        resetPhoneOtpState: (state) => {
+            state.phoneOtpSent = false;
+            state.phoneOtpData = null;
+            state.error = null;
+        },
         logout: (state) => {
             state.user = null;
             state.error = null;
+            state.phoneOtpSent = false;
+            state.phoneOtpData = null;
             localStorage.removeItem('authorization');
             localStorage.removeItem('adminAuthorization');
         }
     },
     extraReducers: (builder) => {
         builder
+            // Phone Send OTP
+            .addCase(sendPhoneOtpThunk.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+                state.phoneOtpSent = false;
+            })
+            .addCase(sendPhoneOtpThunk.fulfilled, (state, action) => {
+                state.loading = false;
+                state.phoneOtpSent = true;
+                state.phoneOtpData = action.payload;
+                state.error = null;
+            })
+            .addCase(sendPhoneOtpThunk.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload;
+                state.phoneOtpSent = false;
+            })
+
+            // Phone Verify OTP
+            .addCase(verifyPhoneOtpThunk.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+            })
+            .addCase(verifyPhoneOtpThunk.fulfilled, (state, action) => {
+                state.loading = false;
+                state.user = action.payload;
+                state.phoneOtpSent = false;
+                state.phoneOtpData = null;
+                state.error = null;
+                if (action.payload?.token) {
+                    localStorage.setItem('authorization', action.payload.token);
+                }
+            })
+            .addCase(verifyPhoneOtpThunk.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload;
+            })
+
             // User Register
             .addCase(registerUserThunk.pending, (state) => {
                 state.loading = true;
@@ -211,5 +284,5 @@ const authSlice = createSlice({
     },
 });
 
-export const { clearForgotPasswordState, clearResetPasswordState, logout } = authSlice.actions;
+export const { clearForgotPasswordState, clearResetPasswordState, resetPhoneOtpState, logout } = authSlice.actions;
 export default authSlice.reducer;

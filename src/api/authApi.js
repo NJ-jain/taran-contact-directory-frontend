@@ -45,3 +45,15 @@ export const sendOTP = async (email) => {
     const response = await axios.post(`${getAuthBaseUrl()}/send-otp`, { email });
     return response.data;
 };
+
+// Send Phone OTP for community members
+export const sendPhoneOtpApi = async (phoneNumber) => {
+    const response = await axios.post(`${getAuthBaseUrl()}/phone/send-otp`, { phoneNumber });
+    return response.data;
+};
+
+// Verify Phone OTP for community members
+export const verifyPhoneOtpApi = async ({ phoneNumber, otp }) => {
+    const response = await axios.post(`${getAuthBaseUrl()}/phone/verify-otp`, { phoneNumber, otp });
+    return response.data;
+};

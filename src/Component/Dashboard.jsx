@@ -4,6 +4,7 @@ import { getAllMembersThunk } from '../features/member/memberSlice';
 import { useLocation, useNavigate } from 'react-router-dom';
 import Navbar from './Navbar';
 import Avatar from './Avatar';
+import PhoneAuthGate from './PhoneAuthGate';
 import { 
   Phone, 
   Mail, 
@@ -15,8 +16,10 @@ import {
   Crown, 
   CheckCircle2, 
   ArrowRight, 
-  X,
-  RefreshCw
+  X, 
+  RefreshCw,
+  ShieldCheck,
+  Lock
 } from 'lucide-react';
 
 const CATEGORY_LABELS = {
@@ -32,8 +35,12 @@ const ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
 const Dashboard = () => {
   const dispatch = useDispatch();
   const { members, loading, error } = useSelector((state) => state.member);
+  const authUser = useSelector((state) => state.auth.user);
   const location = useLocation();
   const navigate = useNavigate();
+
+  const [authRefreshTrigger, setAuthRefreshTrigger] = useState(0);
+  const isAuthenticated = !!localStorage.getItem('authorization') || !!authUser;
 
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedLetter, setSelectedLetter] = useState('ALL');
@@ -48,6 +55,7 @@ const Dashboard = () => {
   };
 
   useEffect(() => {
+    if (!isAuthenticated) return;
     const searchParams = new URLSearchParams(location.search);
     const queryParam = searchParams.get('search');
     if (queryParam) {
@@ -55,7 +63,7 @@ const Dashboard = () => {
     } else {
       dispatch(getAllMembersThunk());
     }
-  }, [dispatch, location.search]);
+  }, [dispatch, location.search, isAuthenticated, authRefreshTrigger]);
 
   // Available categories in data
   const availableCategories = useMemo(() => {
@@ -156,9 +164,81 @@ const Dashboard = () => {
           </div>
         )}
 
-        {/* Hero / Header Section */}
-        <div className="bg-white border-b border-gray-200/80 shadow-xs">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        {!isAuthenticated ? (
+          /* Phone OTP Access Gate */
+          <div className="py-12 sm:py-16 px-4 sm:px-6 lg:px-8">
+            <div className="max-w-4xl mx-auto space-y-10">
+              
+              {/* Hero Callout */}
+              <div className="text-center space-y-3">
+                <div className="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-primary-50 border border-primary-100 text-primary-700 text-xs font-semibold">
+                  <ShieldCheck className="w-4 h-4" />
+                  <span>Private Directory • Verified Community Access</span>
+                </div>
+                <h1 className="text-3xl sm:text-4xl font-extrabold text-gray-900 tracking-tight">
+                  Taran Community Contact Directory
+                </h1>
+                <p className="text-base text-gray-600 max-w-xl mx-auto">
+                  To safeguard community privacy, contact details and member profiles are protected. Enter your registered mobile number below to access the directory via OTP.
+                </p>
+              </div>
+
+              {/* Verification Gate Card */}
+              <PhoneAuthGate 
+                onSuccess={() => {
+                  setAuthRefreshTrigger(prev => prev + 1);
+                  dispatch(getAllMembersThunk());
+                }} 
+                title="Member Verification"
+                subtitle="Only phone numbers registered in the directory can log in"
+              />
+
+              {/* Privacy Highlights */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-4">
+                <div className="bg-white p-5 rounded-2xl border border-gray-100 shadow-xs flex items-start space-x-3.5">
+                  <div className="w-10 h-10 rounded-xl bg-primary-50 text-primary-600 flex items-center justify-center shrink-0">
+                    <Lock className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h4 className="text-sm font-bold text-gray-900">Protected Privacy</h4>
+                    <p className="text-xs text-gray-500 mt-1">
+                      Member phone numbers and home addresses are never exposed to search engines or public crawlers.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="bg-white p-5 rounded-2xl border border-gray-100 shadow-xs flex items-start space-x-3.5">
+                  <div className="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center shrink-0">
+                    <CheckCircle2 className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h4 className="text-sm font-bold text-gray-900">Approved Members Only</h4>
+                    <p className="text-xs text-gray-500 mt-1">
+                      Only phone numbers already verified and approved in the community database are granted entry.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="bg-white p-5 rounded-2xl border border-gray-100 shadow-xs flex items-start space-x-3.5">
+                  <div className="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
+                    <Phone className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h4 className="text-sm font-bold text-gray-900">Instant Phone OTP</h4>
+                    <p className="text-xs text-gray-500 mt-1">
+                      No password required. A quick 6-digit one-time code provides seamless, secure community access.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        ) : (
+          <>
+            {/* Hero / Header Section */}
+            <div className="bg-white border-b border-gray-200/80 shadow-xs">
+              <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
             <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
               <div>
                 <div className="flex items-center space-x-2">
@@ -593,6 +673,8 @@ const Dashboard = () => {
             )
           )}
         </div>
+        </>
+        )}
       </div>
     </>
   );
