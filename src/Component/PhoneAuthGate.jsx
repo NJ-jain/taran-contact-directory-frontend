@@ -322,7 +322,7 @@ const PhoneAuthGate = ({ onSuccess, title = "Community Directory Access", subtit
                   Enter 6-Digit Verification Code
                 </label>
                 <p className="text-xs text-gray-500 text-center mb-4">
-                  We've sent a 6-digit OTP code to your registered mobile number.
+                  We've sent a 6-digit verification code to your WhatsApp.
                 </p>
 
                 {/* 6 Segmented OTP Inputs */}
