@@ -16,7 +16,6 @@ import {
   Copy, 
   Check, 
   ExternalLink,
-  Share2,
   Building
 } from 'lucide-react';
 

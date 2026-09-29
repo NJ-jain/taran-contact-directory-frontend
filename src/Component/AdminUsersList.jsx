@@ -3,14 +3,11 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { 
     Search, 
-    Filter, 
-    MoreVertical, 
     Eye, 
-    Users,
-    Calendar,
-    Mail,
-    Phone,
-    Image
+    Users, 
+    Calendar, 
+    Mail, 
+    Image 
 } from 'lucide-react';
 import { getAllUsersThunk } from '../features/admin/adminSlice';
 

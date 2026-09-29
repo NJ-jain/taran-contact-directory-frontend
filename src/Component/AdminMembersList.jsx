@@ -2,17 +2,14 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { 
     Search, 
-    Filter, 
     UserCheck, 
     UserX, 
     Users,
     Calendar,
     Mail,
     Phone,
-    Image,
     CheckCircle,
-    XCircle,
-    Eye
+    XCircle
 } from 'lucide-react';
 import { getAllUsersThunk, approveMemberThunk } from '../features/admin/adminSlice';
 import Avatar from './Avatar';

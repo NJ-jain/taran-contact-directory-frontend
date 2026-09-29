@@ -5,7 +5,7 @@ import { getUserThunk, clearUserState } from '../features/user/userSlice';
 import { logout } from '../features/auth/authSlice';
 import SearchResults from './SearchResults';
 import Avatar from './Avatar';
-import { LogOut, UserRound, Menu, X, Users, Home, Sparkles } from 'lucide-react';
+import { LogOut, UserRound, Menu, X, Users, Home } from 'lucide-react';
 
 const Navbar = () => {
     const [menuOpen, setMenuOpen] = useState(false);

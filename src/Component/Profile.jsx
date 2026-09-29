@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState, useMemo } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { approvalRequestThunk, getUserThunk, updateUserThunk } from "../features/user/userSlice";
 import {
@@ -10,13 +10,11 @@ import {
   ImageUp,
   X,
   Users,
-  Building,
   CheckCircle2,
   Clock,
   Phone,
   Mail,
   MapPin,
-  Calendar,
   Sparkles,
   Save
 } from "lucide-react";
@@ -58,7 +56,6 @@ const Profile = () => {
 
   const [isMemberModalOpen, setIsMemberModalOpen] = useState(false);
   const [selectedMember, setSelectedMember] = useState(null);
-  const [initialMemberState, setInitialMemberState] = useState(null);
   const [fieldErrors, setFieldErrors] = useState({});
 
   useEffect(() => {
@@ -135,7 +132,6 @@ const Profile = () => {
       dp: null,
       dpFile: null,
     });
-    setInitialMemberState(null);
     setFieldErrors({});
     setIsMemberModalOpen(true);
   };
@@ -146,7 +142,6 @@ const Profile = () => {
       dob: formatDateForInput(member.dob),
     };
     setSelectedMember(formatted);
-    setInitialMemberState(formatted);
     setFieldErrors({});
     setIsMemberModalOpen(true);
   };

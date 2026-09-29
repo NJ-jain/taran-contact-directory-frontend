@@ -5,10 +5,7 @@ import {
     Users, 
     UserCheck, 
     UserX, 
-    TrendingUp, 
     Activity,
-    Calendar,
-    Clock,
     Settings
 } from 'lucide-react';
 import { getAllUsersThunk } from '../features/admin/adminSlice';

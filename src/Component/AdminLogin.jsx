@@ -38,7 +38,7 @@ const AdminLogin = () => {
     return (
         <div className="bg-sky-100 flex justify-center items-center h-screen">
             <div className="w-1/2 h-screen hidden lg:block">
-                <img src="https://img.freepik.com/fotos-premium/imagen-fondo_910766-187.jpg?w=826" alt="Placeholder Image" className="object-cover w-full h-full" />
+                <img src="https://img.freepik.com/fotos-premium/imagen-fondo_910766-187.jpg?w=826" alt="Community workspace" className="object-cover w-full h-full" />
             </div>
             <div className="lg:p-36 md:p-52 sm:20 p-8 w-full lg:w-1/2">
                 <h1 className="text-2xl font-semibold mb-4">Admin Login</h1>
@@ -76,7 +76,7 @@ const AdminLogin = () => {
                         </button>
                     </div>
                     <div className="mb-6 text-blue-500">
-                        <a href="#" className="hover:underline">Forgot Password?</a>
+                        <button type="button" onClick={() => navigate('/forgot-password')} className="hover:underline text-sm text-blue-500">Forgot Password?</button>
                     </div>
                     <button
                         type="submit"

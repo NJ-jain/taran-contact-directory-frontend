@@ -1,8 +1,8 @@
-import React, { useEffect, useRef, useState, useCallback } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { searchMembersThunk } from '../features/member/memberSlice';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Search, User } from 'lucide-react';
+import { Search } from 'lucide-react';
 import Avatar from './Avatar';
 
 const SearchResults = () => {
@@ -14,29 +14,6 @@ const SearchResults = () => {
     const [isInputFocused, setIsInputFocused] = useState(false);
     const ref = useRef(null);
 
-    // Debounce logic to reduce API calls
-    const debounce = (func, delay) => {
-        let timeout;
-        return (...args) => {
-            clearTimeout(timeout);
-            timeout = setTimeout(() => func(...args), delay);
-        };
-    };
-
-    // Handle search dispatch with debouncing
-    const debouncedSearch = useCallback(
-        debounce((query) => {
-            if (query) {
-                dispatch(searchMembersThunk(query));
-                navigate(`?search=${encodeURIComponent(query)}`, { replace: true });
-            } else {
-                dispatch(searchMembersThunk(''));
-                navigate('.', { replace: true });
-            }
-        }, 500),
-        [dispatch, navigate]
-    );
-
     // Effect to read URL query parameters
     useEffect(() => {
         const searchParams = new URLSearchParams(location.search);
@@ -44,12 +21,18 @@ const SearchResults = () => {
         setSearchQuery(queryParam);
     }, [location.search]);
 
-    // Effect to debounce the API call
+    // Debounced search API call
     useEffect(() => {
-        if (searchQuery.trim()) {
-            debouncedSearch(searchQuery);
+        if (!searchQuery.trim()) {
+            return;
         }
-    }, [searchQuery, debouncedSearch]);
+        const timer = setTimeout(() => {
+            dispatch(searchMembersThunk(searchQuery));
+            navigate(`?search=${encodeURIComponent(searchQuery)}`, { replace: true });
+        }, 500);
+
+        return () => clearTimeout(timer);
+    }, [searchQuery, dispatch, navigate]);
 
     // Close dropdown on outside click
     useEffect(() => {

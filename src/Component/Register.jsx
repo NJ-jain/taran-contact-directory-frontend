@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { registerUserThunk } from '../features/auth/authSlice';
-import { Mail, Lock, User, MapPin, FileText, Phone, ArrowRight } from 'lucide-react';
+import { Mail, Lock, User, MapPin, FileText, ArrowRight } from 'lucide-react';
 
 const Register = () => {
     const navigate = useNavigate();

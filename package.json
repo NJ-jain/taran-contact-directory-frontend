@@ -47,7 +47,7 @@
     ]
   },
   "devDependencies": {
-    "@vitejs/plugin-react": "^4.7.0",
+    "@vitejs/plugin-react": "^6.1.1",
     "@vitejs/plugin-react-oxc": "^0.4.3",
     "autoprefixer": "^10.6.1",
     "daisyui": "^4.12.14",

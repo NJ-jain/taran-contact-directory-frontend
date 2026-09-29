@@ -8,7 +8,6 @@ import {
   Phone, 
   Mail, 
   MapPin, 
-  Users, 
   Search, 
   Grid3X3, 
   List, 
@@ -17,9 +16,7 @@ import {
   CheckCircle2, 
   ArrowRight, 
   X,
-  Filter,
-  RefreshCw,
-  Sparkles
+  RefreshCw
 } from 'lucide-react';
 
 const CATEGORY_LABELS = {

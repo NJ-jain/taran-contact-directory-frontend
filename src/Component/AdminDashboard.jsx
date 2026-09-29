@@ -1,29 +1,18 @@
 import React, { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { 
     Users, 
-    UserCheck, 
-    UserX, 
-    TrendingUp, 
     Activity,
     Settings,
     LogOut,
     Menu,
     X
 } from 'lucide-react';
-import { getAllUsersThunk } from '../features/admin/adminSlice';
 
 const AdminDashboard = ({ children, activePage }) => {
-    const dispatch = useDispatch();
     const navigate = useNavigate();
     const location = useLocation();
-    const { users, loading } = useSelector((state) => state.admin);
     const [sidebarOpen, setSidebarOpen] = useState(false);
-
-    useEffect(() => {
-        dispatch(getAllUsersThunk());
-    }, [dispatch]);
 
     // Close sidebar when clicking outside on mobile
     useEffect(() => {
@@ -41,14 +30,6 @@ const AdminDashboard = ({ children, activePage }) => {
     useEffect(() => {
         setSidebarOpen(false);
     }, [location.pathname]);
-
-    const totalUsers = users?.length || 0;
-    const approvedMembers = users?.reduce((acc, user) => {
-        return acc + (user.members?.filter(member => member.isApproved)?.length || 0);
-    }, 0);
-    const pendingMembers = users?.reduce((acc, user) => {
-        return acc + (user.members?.filter(member => !member.isApproved)?.length || 0);
-    }, 0);
 
     const handleLogout = () => {
         localStorage.removeItem('adminToken');
