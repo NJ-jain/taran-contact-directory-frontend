@@ -73,7 +73,7 @@ const Dashboard = () => {
     if (!members) return new Set();
     const letters = new Set();
     members.forEach((m) => {
-      const char = m.firstName?.charAt(0)?.toUpperCase();
+      const char = (m.firstName || '').trim().charAt(0)?.toUpperCase();
       if (char) letters.add(char);
     });
     return letters;
@@ -103,7 +103,7 @@ const Dashboard = () => {
 
       // 2. Letter filter
       if (selectedLetter !== 'ALL') {
-        const firstLetter = member.firstName?.charAt(0)?.toUpperCase();
+        const firstLetter = (member.firstName || '').trim().charAt(0)?.toUpperCase();
         if (firstLetter !== selectedLetter) return false;
       }
 
@@ -121,7 +121,7 @@ const Dashboard = () => {
   const groupedMembers = useMemo(() => {
     const groups = {};
     filteredMembers.forEach((member) => {
-      const letter = member.firstName?.charAt(0)?.toUpperCase() || '#';
+      const letter = (member.firstName || '').trim().charAt(0)?.toUpperCase() || '#';
       if (!groups[letter]) groups[letter] = [];
       groups[letter].push(member);
     });
@@ -473,26 +473,26 @@ const Dashboard = () => {
               /* LIST VIEW */
               <div className="bg-white rounded-2xl border border-gray-200/80 shadow-xs overflow-hidden">
                 {sortedLetters.map((letter) => (
-                  <div key={letter}>
+                  <div key={letter} className="border-b border-gray-100 last:border-b-0">
                     {/* Alphabet Section Header */}
-                    <div className="sticky top-16 bg-gray-50/95 backdrop-blur-xs px-5 py-2.5 border-b border-gray-200/60 z-10 flex items-center justify-between">
-                      <span className="text-xs font-bold text-gray-700 tracking-wider">
+                    <div className="bg-slate-50 px-4 sm:px-5 py-2.5 border-b border-gray-100 flex items-center justify-between select-none">
+                      <span className="text-xs font-bold text-gray-700 tracking-wider uppercase">
                         {letter}
                       </span>
                       <span className="text-[11px] text-gray-400 font-medium">
-                        {groupedMembers[letter].length} contacts
+                        {groupedMembers[letter].length} {groupedMembers[letter].length === 1 ? 'contact' : 'contacts'}
                       </span>
                     </div>
 
                     {/* Member rows */}
                     <div className="divide-y divide-gray-100">
                       {groupedMembers[letter]
-                        .sort((a, b) => (a.firstName || '').localeCompare(b.firstName || ''))
+                        .sort((a, b) => (a.firstName || '').trim().localeCompare((b.firstName || '').trim()))
                         .map((member) => (
                           <div
                             key={member._id}
                             onClick={() => handleDetailsClick(member._id)}
-                            className="flex items-center justify-between px-5 py-3.5 hover:bg-slate-50/80 transition-colors cursor-pointer group"
+                            className="flex items-center justify-between px-4 sm:px-5 py-3 hover:bg-slate-50/80 transition-colors cursor-pointer group bg-white"
                           >
                             <div className="flex items-center space-x-3.5 min-w-0 flex-1">
                               <Avatar
@@ -535,7 +535,7 @@ const Dashboard = () => {
                             </div>
 
                             {/* Quick Actions */}
-                            <div className="flex items-center space-x-2 ml-4">
+                            <div className="flex items-center space-x-1.5 sm:space-x-2 ml-3 flex-shrink-0">
                               {member.phoneNumber && (
                                 <button
                                   onClick={(e) => {
