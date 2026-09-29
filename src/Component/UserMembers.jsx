@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
 import { getUserMembersThunk, approveMemberThunk, getAllUsersThunk } from '../features/admin/adminSlice';
 import { Image, ArrowLeft, Mail, Phone, Calendar, CheckCircle, XCircle } from 'lucide-react';
+import Avatar from './Avatar';
 
 const UserMembers = ({ userId: propUserId }) => {
     const dispatch = useDispatch();
@@ -108,19 +109,10 @@ const UserMembers = ({ userId: propUserId }) => {
             <div className="bg-white shadow rounded-lg">
                 <div className="px-4 py-5 sm:p-6">
                     <div className="flex items-center">
-                        <div className="flex-shrink-0 h-16 w-16">
-                            {selectedUser.banner ? (
-                                <img 
-                                    className="h-16 w-16 rounded-full object-cover" 
-                                    src={selectedUser.banner} 
-                                    alt="User avatar" 
-                                />
-                            ) : (
-                                <div className="h-16 w-16 rounded-full bg-gray-200 flex items-center justify-center">
-                                    <Image className="h-8 w-8 text-gray-400" />
-                                </div>
-                            )}
-                        </div>
+                        <Avatar
+                            name={selectedUser.email}
+                            size="lg"
+                        />
                         <div className="ml-4">
                             <h3 className="text-lg font-medium text-gray-900">{selectedUser.email}</h3>
                             {selectedUser.category && (
@@ -196,19 +188,12 @@ const UserMembers = ({ userId: propUserId }) => {
                             <div className="px-4 py-4 sm:px-6">
                                 <div className="flex items-center justify-between">
                                     <div className="flex items-center">
-                                        <div className="flex-shrink-0 h-12 w-12">
-                            {member.dp ? (
-                                <img 
-                                                    className="h-12 w-12 rounded-full object-cover" 
+                                        <Avatar 
                                     src={member.dp} 
-                                    alt={`${member.firstName} ${member.lastName}`} 
+                                    firstName={member.firstName} 
+                                    lastName={member.lastName} 
+                                    size="md" 
                                 />
-                            ) : (
-                                                <div className="h-12 w-12 rounded-full bg-gray-200 flex items-center justify-center">
-                                                    <Image className="h-6 w-6 text-gray-400" />
-                                                </div>
-                                )}
-                            </div>
                                         <div className="ml-4">
                                             <div className="flex items-center">
                                                 <p className="text-sm font-medium text-gray-900">

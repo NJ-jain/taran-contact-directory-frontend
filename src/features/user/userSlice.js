@@ -1,9 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { approvalRequestApi, getUser, updateUser } from '../../api/userApi'; // Assume these functions are defined in userApi.js
-
-
-
-
+import { approvalRequestApi, getUser, updateUser } from '../../api/userApi';
 
 export const getUserThunk = createAsyncThunk(
     'user/getUser',
@@ -12,7 +8,7 @@ export const getUserThunk = createAsyncThunk(
             const response = await getUser();
             return response;
         } catch (err) {
-            return rejectWithValue(err.response.data);
+            return rejectWithValue(err.response?.data || { message: err.message || 'Failed to fetch user' });
         }
     }
 );
@@ -24,22 +20,21 @@ export const updateUserThunk = createAsyncThunk(
             const response = await updateUser(userData);
             return response;
         } catch (err) {
-            return rejectWithValue(err.response.data);
+            return rejectWithValue(err.response?.data || { message: err.message || 'Failed to update user' });
         }
     }
 );
 
 export const approvalRequestThunk = createAsyncThunk(
     'user/approvalRequest',
-    async () => {
+    async (_, { rejectWithValue }) => {
         try {
-             await approvalRequestApi();
+            return await approvalRequestApi();
         } catch (err) {
-            console.log(err);
+            return rejectWithValue(err.response?.data || { message: err.message || 'Approval request failed' });
         }
     }
 );
-
 
 const userSlice = createSlice({
     name: 'user',
@@ -52,6 +47,11 @@ const userSlice = createSlice({
         updateFromMember: (state, action) => {
             state.data = action.payload;
         },
+        clearUserState: (state) => {
+            state.data = null;
+            state.loading = false;
+            state.error = null;
+        }
     },
     extraReducers: (builder) => {
         builder
@@ -82,10 +82,5 @@ const userSlice = createSlice({
     },
 });
 
-// ... existing code ...
-
-// Export the action to be used in components
-export const { updateFromMember } = userSlice.actions;
-
-// Export the reducer as the default export
+export const { updateFromMember, clearUserState } = userSlice.actions;
 export default userSlice.reducer;

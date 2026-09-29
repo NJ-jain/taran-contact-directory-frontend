@@ -1,44 +1,33 @@
 import { configureStore } from '@reduxjs/toolkit';
-import { persistStore, persistReducer } from 'redux-persist';
+import { 
+  persistStore, 
+  persistReducer,
+  FLUSH,
+  REHYDRATE,
+  PAUSE,
+  PERSIST,
+  PURGE,
+  REGISTER 
+} from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
-import rootReducer from './rootReducer'; // Import the combined reducers
+import rootReducer from './rootReducer';
 
 const persistConfig = {
-    key: 'root',
-    storage,
+  key: 'root',
+  storage,
+  whitelist: ['auth'], // Persist auth session while keeping members and user profile fresh
 };
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
 
-// Custom middleware to support asyncDispatch
-const asyncDispatchMiddleware = storeAPI => next => action => {
-    let syncActivityFinished = false;
-    let actionQueue = [];
-
-    function flushQueue() {
-        actionQueue.forEach(a => storeAPI.dispatch(a)); // Flush the queue
-        actionQueue = [];
-    }
-
-    function asyncDispatch(asyncAction) {
-        actionQueue = actionQueue.concat([asyncAction]);
-        if (syncActivityFinished) {
-            flushQueue();
-        }
-    }
-
-    const actionWithAsyncDispatch = Object.assign({}, action, { asyncDispatch });
-
-    const result = next(actionWithAsyncDispatch);
-    syncActivityFinished = true;
-    flushQueue();
-    return result;
-};
-
 export const store = configureStore({
-    reducer: persistedReducer,
-    middleware: (getDefaultMiddleware) =>
-        getDefaultMiddleware().concat(asyncDispatchMiddleware),
+  reducer: persistedReducer,
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({
+      serializableCheck: {
+        ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
+      },
+    }),
 });
 
 export const persistor = persistStore(store);

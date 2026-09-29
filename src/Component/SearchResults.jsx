@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { searchMembersThunk } from '../features/member/memberSlice';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Search, User } from 'lucide-react';
+import Avatar from './Avatar';
 
 const SearchResults = () => {
     const [searchQuery, setSearchQuery] = useState('');
@@ -86,23 +87,19 @@ const SearchResults = () => {
                         <ul className="max-h-64 overflow-y-auto">
                             {members.slice(0, 8).map((data) => (
                                 <li
-                                    key={data.id}
+                                    key={data._id || data.id}
                                     className="flex items-center cursor-pointer hover:bg-gray-50 px-3 py-2 transition-colors duration-150"
                                     onClick={() => {
                                         navigate(`/details/${data._id}`);
                                         setIsInputFocused(false);
                                     }}
                                 >
-                                    <div className="flex-shrink-0">
-                                        <img 
-                                            src={data.dp} 
-                                            alt={data.firstName} 
-                                            className="w-8 h-8 rounded-full object-cover border border-gray-200"
-                                            onError={(e) => {
-                                                e.target.src = 'https://via.placeholder.com/32x32/6B7280/FFFFFF?text=' + (data.firstName?.charAt(0) || '?');
-                                            }}
-                                        />
-                                    </div>
+                                <Avatar 
+                                    src={data.dp} 
+                                    firstName={data.firstName} 
+                                    lastName={data.lastName} 
+                                    size="sm" 
+                                />
                                     <div className="ml-3 min-w-0 flex-1">
                                         <p className="text-sm font-medium text-gray-900 truncate">
                                             {data.firstName} {data.lastName}

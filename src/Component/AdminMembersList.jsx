@@ -15,6 +15,7 @@ import {
     Eye
 } from 'lucide-react';
 import { getAllUsersThunk, approveMemberThunk } from '../features/admin/adminSlice';
+import Avatar from './Avatar';
 
 const AdminMembersList = () => {
     const dispatch = useDispatch();
@@ -256,19 +257,12 @@ const AdminMembersList = () => {
                             <div className="px-4 py-4 sm:px-6">
                                 <div className="flex items-center justify-between">
                                     <div className="flex items-center">
-                                        <div className="flex-shrink-0 h-12 w-12">
-                                            {member.dp ? (
-                                                <img 
-                                                    className="h-12 w-12 rounded-full object-cover" 
-                                                    src={member.dp} 
-                                                    alt={`${member.firstName} ${member.lastName}`} 
-                                                />
-                                            ) : (
-                                                <div className="h-12 w-12 rounded-full bg-gray-200 flex items-center justify-center">
-                                                    <Image className="h-6 w-6 text-gray-400" />
-                                                </div>
-                                            )}
-                                        </div>
+                                        <Avatar
+                                            src={member.dp}
+                                            firstName={member.firstName}
+                                            lastName={member.lastName}
+                                            size="md"
+                                        />
                                         <div className="ml-4">
                                             <div className="flex items-center">
                                                 <p className="text-sm font-medium text-gray-900">
