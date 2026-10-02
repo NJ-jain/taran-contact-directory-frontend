@@ -6,33 +6,27 @@ import {
     loginUserAdmin, 
     forgotPassword, 
     resetPassword,
+    phoneLoginApi,
     sendPhoneOtpApi,
     verifyPhoneOtpApi
 } from '../../api/authApi';
 
-export const sendPhoneOtpThunk = createAsyncThunk(
-    'auth/sendPhoneOtp',
-    async (phoneNumber, { rejectWithValue }) => {
+export const phoneLoginThunk = createAsyncThunk(
+    'auth/phoneLogin',
+    async (arg, { rejectWithValue }) => {
         try {
-            const response = await sendPhoneOtpApi(phoneNumber);
+            const phoneNumber = typeof arg === 'string' ? arg : (arg?.phoneNumber || '');
+            const response = await phoneLoginApi({ phoneNumber });
             return response;
         } catch (error) {
-            return rejectWithValue(error.response?.data || { message: error.message || 'Failed to send OTP' });
+            return rejectWithValue(error.response?.data || { message: error.message || 'Login failed' });
         }
     }
 );
 
-export const verifyPhoneOtpThunk = createAsyncThunk(
-    'auth/verifyPhoneOtp',
-    async ({ phoneNumber, otp }, { rejectWithValue }) => {
-        try {
-            const response = await verifyPhoneOtpApi({ phoneNumber, otp });
-            return response;
-        } catch (error) {
-            return rejectWithValue(error.response?.data || { message: error.message || 'Verification failed' });
-        }
-    }
-);
+// Backward compatible aliases
+export const sendPhoneOtpThunk = phoneLoginThunk;
+export const verifyPhoneOtpThunk = phoneLoginThunk;
 
 export const registerUserThunk = createAsyncThunk(
     'auth/registerUser',
@@ -113,6 +107,7 @@ const authSlice = createSlice({
         loading: false,
         error: null,
         forgotPasswordSuccess: false,
+        forgotPasswordData: null,
         resetPasswordSuccess: false,
         phoneOtpSent: false,
         phoneOtpData: null,
@@ -120,6 +115,7 @@ const authSlice = createSlice({
     reducers: {
         clearForgotPasswordState: (state) => {
             state.forgotPasswordSuccess = false;
+            state.forgotPasswordData = null;
             state.error = null;
         },
         clearResetPasswordState: (state) => {
@@ -142,30 +138,12 @@ const authSlice = createSlice({
     },
     extraReducers: (builder) => {
         builder
-            // Phone Send OTP
-            .addCase(sendPhoneOtpThunk.pending, (state) => {
-                state.loading = true;
-                state.error = null;
-                state.phoneOtpSent = false;
-            })
-            .addCase(sendPhoneOtpThunk.fulfilled, (state, action) => {
-                state.loading = false;
-                state.phoneOtpSent = true;
-                state.phoneOtpData = action.payload;
-                state.error = null;
-            })
-            .addCase(sendPhoneOtpThunk.rejected, (state, action) => {
-                state.loading = false;
-                state.error = action.payload;
-                state.phoneOtpSent = false;
-            })
-
-            // Phone Verify OTP
-            .addCase(verifyPhoneOtpThunk.pending, (state) => {
+            // Phone Direct Login (No OTP required)
+            .addCase(phoneLoginThunk.pending, (state) => {
                 state.loading = true;
                 state.error = null;
             })
-            .addCase(verifyPhoneOtpThunk.fulfilled, (state, action) => {
+            .addCase(phoneLoginThunk.fulfilled, (state, action) => {
                 state.loading = false;
                 state.user = action.payload;
                 state.phoneOtpSent = false;
@@ -175,7 +153,7 @@ const authSlice = createSlice({
                     localStorage.setItem('authorization', action.payload.token);
                 }
             })
-            .addCase(verifyPhoneOtpThunk.rejected, (state, action) => {
+            .addCase(phoneLoginThunk.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload;
             })
@@ -220,9 +198,10 @@ const authSlice = createSlice({
                 state.error = null;
                 state.forgotPasswordSuccess = false;
             })
-            .addCase(forgotPasswordThunk.fulfilled, (state) => {
+            .addCase(forgotPasswordThunk.fulfilled, (state, action) => {
                 state.loading = false;
                 state.forgotPasswordSuccess = true;
+                state.forgotPasswordData = action.payload;
                 state.error = null;
             })
             .addCase(forgotPasswordThunk.rejected, (state, action) => {

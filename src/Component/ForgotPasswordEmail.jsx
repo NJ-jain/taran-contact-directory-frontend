@@ -7,7 +7,7 @@ import { Mail, ArrowLeft, ArrowRight } from 'lucide-react';
 const ForgotPasswordEmail = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
-    const { loading, error, forgotPasswordSuccess } = useSelector((state) => state.auth);
+    const { loading, error, forgotPasswordSuccess, forgotPasswordData } = useSelector((state) => state.auth);
     
     const [email, setEmail] = useState('');
     const [resendTimer, setResendTimer] = useState(0);
@@ -21,11 +21,16 @@ const ForgotPasswordEmail = () => {
     // Handle successful email submission
     useEffect(() => {
         if (forgotPasswordSuccess) {
-            // Navigate to OTP page with email as state
-            navigate('/forgot-password-otp', { state: { email } });
+            // Navigate to OTP page with email and optional devOtp as state
+            navigate('/forgot-password-otp', { 
+                state: { 
+                    email, 
+                    devOtp: forgotPasswordData?.devOtp 
+                } 
+            });
             dispatch(clearForgotPasswordState());
         }
-    }, [forgotPasswordSuccess, navigate, dispatch, email]);
+    }, [forgotPasswordSuccess, forgotPasswordData, navigate, dispatch, email]);
 
     // Timer effect for resend OTP
     useEffect(() => {

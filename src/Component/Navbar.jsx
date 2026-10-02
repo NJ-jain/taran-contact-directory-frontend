@@ -65,11 +65,9 @@ const Navbar = () => {
 
                     {/* Desktop Navigation */}
                     <div className="hidden md:flex items-center space-x-5">
-                        {isAuthenticated && (
-                            <div className="relative w-64 lg:w-72">
-                                <SearchResults />
-                            </div>
-                        )}
+                        <div className="relative w-64 lg:w-72">
+                            <SearchResults />
+                        </div>
 
                         {!isAuthenticated ? (
                             <div className="flex items-center space-x-3">
@@ -162,11 +160,9 @@ const Navbar = () => {
             {menuOpen && (
                 <div className="md:hidden animate-slide-up border-t border-gray-100 bg-white shadow-xl">
                     <div className="px-4 pt-3 pb-4 space-y-2">
-                        {isAuthenticated && (
-                            <div className="py-2">
-                                <SearchResults />
-                            </div>
-                        )}
+                        <div className="py-2">
+                            <SearchResults />
+                        </div>
 
                         {!isAuthenticated ? (
                             <div className="space-y-2 pt-2 border-t border-gray-100">

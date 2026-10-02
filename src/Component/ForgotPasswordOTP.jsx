@@ -19,8 +19,9 @@ const ForgotPasswordOTP = () => {
     const [newPassword, setNewPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
 
-    // Get email from navigation state
+    // Get email and optional devOtp from navigation state
     const email = location.state?.email;
+    const devOtp = location.state?.devOtp;
 
     // Redirect if no email is provided
     useEffect(() => {
@@ -155,6 +156,7 @@ const ForgotPasswordOTP = () => {
                                 maxLength="6"
                             />
                         </div>
+
 
                         {/* New Password */}
                         <div>

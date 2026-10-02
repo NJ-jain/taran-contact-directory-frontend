@@ -2,14 +2,12 @@ import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { loginUserThunk } from '../features/auth/authSlice';
-import PhoneAuthGate from './PhoneAuthGate';
-import { Eye, EyeOff, Mail, Lock, Phone, ArrowRight, ShieldCheck } from 'lucide-react';
+import { Eye, EyeOff, Mail, Lock, ArrowRight, Users } from 'lucide-react';
 
 const Login = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const { loading, error } = useSelector((state) => state.auth);
-    const [loginMode, setLoginMode] = useState('phone'); // 'phone' | 'email'
     const [showPassword, setShowPassword] = useState(false);
 
     const [formData, setFormData] = useState({
@@ -46,55 +44,18 @@ const Login = () => {
                         onClick={() => navigate('/')} 
                         className="mx-auto h-16 w-16 bg-gradient-to-tr from-primary-600 to-indigo-600 rounded-2xl flex items-center justify-center shadow-medium cursor-pointer hover:scale-105 transition-transform"
                     >
-                        <Phone className="h-8 w-8 text-white" />
+                        <Users className="h-8 w-8 text-white" />
                     </div>
                     <h2 className="mt-4 text-3xl font-extrabold text-gray-900 tracking-tight">
                         Taran Directory Sign In
                     </h2>
                     <p className="mt-1.5 text-sm text-gray-600">
-                        {loginMode === 'phone' 
-                            ? 'Verify with your registered community mobile number' 
-                            : 'Sign in to your account with email and password'}
+                        Sign in to your account with email and password
                     </p>
                 </div>
 
-                {/* Tab Switcher */}
-                <div className="flex bg-gray-200/70 p-1.5 rounded-2xl shadow-inner">
-                    <button
-                        type="button"
-                        onClick={() => setLoginMode('phone')}
-                        className={`flex-1 py-2.5 px-3 rounded-xl text-xs sm:text-sm font-semibold transition-all flex items-center justify-center space-x-1.5 ${
-                            loginMode === 'phone'
-                                ? 'bg-white text-primary-700 shadow-sm'
-                                : 'text-gray-600 hover:text-gray-900'
-                        }`}
-                    >
-                        <Phone className="w-4 h-4" />
-                        <span>Member Phone (OTP)</span>
-                    </button>
-                    <button
-                        type="button"
-                        onClick={() => setLoginMode('email')}
-                        className={`flex-1 py-2.5 px-3 rounded-xl text-xs sm:text-sm font-semibold transition-all flex items-center justify-center space-x-1.5 ${
-                            loginMode === 'email'
-                                ? 'bg-white text-primary-700 shadow-sm'
-                                : 'text-gray-600 hover:text-gray-900'
-                        }`}
-                    >
-                        <Mail className="w-4 h-4" />
-                        <span>Email & Password</span>
-                    </button>
-                </div>
-
-                {/* Mode Content */}
-                {loginMode === 'phone' ? (
-                    <PhoneAuthGate
-                        onSuccess={() => navigate('/')}
-                        title="Member Access"
-                        subtitle="Enter your 10-digit registered number"
-                    />
-                ) : (
-                    <div className="bg-white rounded-2xl shadow-soft border border-gray-100 p-8">
+                {/* Login Form */}
+                <div className="bg-white rounded-2xl shadow-soft border border-gray-100 p-8">
                     <form className="space-y-6" onSubmit={handleSubmit}>
                         {/* Email Field */}
                         <div>
@@ -164,6 +125,7 @@ const Login = () => {
                             </div>
                             <div className="text-sm">
                                 <button
+                                    type="button"
                                     onClick={() => navigate('/forgot-password')}
                                     className="font-medium text-primary-600 hover:text-primary-500 transition-colors duration-200"
                                 >
@@ -182,7 +144,7 @@ const Login = () => {
                                         </svg>
                                     </div>
                                     <div className="ml-3">
-                                        <p className="text-sm text-red-700">{error.message}</p>
+                                        <p className="text-sm text-red-700">{error.message || String(error)}</p>
                                     </div>
                                 </div>
                             </div>
@@ -223,12 +185,14 @@ const Login = () => {
                     {/* Sign Up Links */}
                     <div className="mt-6 space-y-3">
                         <button
+                            type="button"
                             onClick={() => navigate('/register')}
                             className="w-full flex justify-center py-2 px-4 border border-gray-300 rounded-lg shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-all duration-200"
                         >
                             Create new account
                         </button>
                         <button
+                            type="button"
                             onClick={() => navigate('/admin/login')}
                             className="w-full flex justify-center py-2 px-4 border border-primary-300 rounded-lg shadow-sm text-sm font-medium text-primary-700 bg-primary-50 hover:bg-primary-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-all duration-200"
                         >
@@ -236,10 +200,10 @@ const Login = () => {
                         </button>
                     </div>
                 </div>
-                )}
 
                 <div className="text-center pt-2">
                     <button
+                        type="button"
                         onClick={() => navigate('/')}
                         className="text-xs font-semibold text-gray-500 hover:text-primary-600 transition-colors"
                     >

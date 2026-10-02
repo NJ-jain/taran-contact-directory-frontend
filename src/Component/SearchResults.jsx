@@ -68,7 +68,7 @@ const SearchResults = () => {
                             Search Results
                         </div>
                         <ul className="max-h-64 overflow-y-auto">
-                            {members.slice(0, 8).map((data) => (
+                            {members.filter(m => m.isApproved).slice(0, 8).map((data) => (
                                 <li
                                     key={data._id || data.id}
                                     className="flex items-center cursor-pointer hover:bg-gray-50 px-3 py-2 transition-colors duration-150"

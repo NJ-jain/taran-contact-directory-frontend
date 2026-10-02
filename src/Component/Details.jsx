@@ -4,7 +4,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { getMemberThunk, clearMemberDetails } from "../features/member/memberSlice";
 import Navbar from "./Navbar";
 import Avatar from "./Avatar";
-import PhoneAuthGate from "./PhoneAuthGate";
 import { 
   Phone, 
   Mail, 
@@ -17,8 +16,7 @@ import {
   Copy, 
   Check, 
   ExternalLink,
-  Building,
-  Lock
+  Building
 } from 'lucide-react';
 
 const CATEGORY_LABELS = {
@@ -37,22 +35,18 @@ const Details = () => {
   const memberState = useSelector((state) => state.member.member);
   const loading = useSelector((state) => state.member.loading);
   const error = useSelector((state) => state.member.error);
-  const authUser = useSelector((state) => state.auth.user);
-  const isAuthenticated = !!localStorage.getItem('authorization') || !!authUser;
 
   const [copiedField, setCopiedField] = useState(null);
-
-  // Normalize member data structure
   const member = memberState?.member || memberState || {};
 
   useEffect(() => {
-    if (id && isAuthenticated) {
+    if (id) {
       dispatch(getMemberThunk({ id }));
     }
     return () => {
       dispatch(clearMemberDetails());
     };
-  }, [dispatch, id, isAuthenticated]);
+  }, [dispatch, id]);
 
   const copyToClipboard = (text, fieldName) => {
     if (!text) return;
@@ -77,7 +71,7 @@ const Details = () => {
 
   const user = member?.userId || {};
   const familyMembers = (user?.membersArray || []).filter(
-    (fm) => (fm._id || fm.id) !== id
+    (fm) => fm && (fm._id || fm.id) && (fm._id || fm.id) !== id && fm.isApproved === true
   );
 
   return (
@@ -94,25 +88,7 @@ const Details = () => {
           </div>
         )}
 
-        {!isAuthenticated ? (
-          <div className="max-w-xl mx-auto px-4 py-12">
-            <div className="text-center mb-6">
-              <div className="w-12 h-12 rounded-2xl bg-amber-100 text-amber-600 flex items-center justify-center mx-auto mb-3">
-                <Lock className="w-6 h-6" />
-              </div>
-              <h2 className="text-xl font-bold text-gray-900">Protected Member Profile</h2>
-              <p className="text-xs text-gray-500 mt-1 max-w-sm mx-auto">
-                To view this member's contact details, phone number, and address, please verify your registered community phone number.
-              </p>
-            </div>
-            <PhoneAuthGate
-              onSuccess={() => dispatch(getMemberThunk({ id }))}
-              title="Member Verification"
-              subtitle="Verify your number to view contact details"
-            />
-          </div>
-        ) : (
-          <>
+
             {/* Error State */}
             {error && !loading && (
           <div className="max-w-2xl mx-auto px-4 pt-12">
@@ -392,8 +368,7 @@ const Details = () => {
             </div>
           </>
         )}
-      </>
-    )}
+
       </div>
     </>
   );

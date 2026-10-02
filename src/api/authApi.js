@@ -46,14 +46,17 @@ export const sendOTP = async (email) => {
     return response.data;
 };
 
-// Send Phone OTP for community members
-export const sendPhoneOtpApi = async (phoneNumber) => {
-    const response = await axios.post(`${getAuthBaseUrl()}/phone/send-otp`, { phoneNumber });
+// Direct phone login for community members (No OTP required)
+export const phoneLoginApi = async ({ phoneNumber }) => {
+    const response = await axios.post(`${getAuthBaseUrl()}/phone/login`, { phoneNumber });
     return response.data;
 };
 
-// Verify Phone OTP for community members
-export const verifyPhoneOtpApi = async ({ phoneNumber, otp }) => {
-    const response = await axios.post(`${getAuthBaseUrl()}/phone/verify-otp`, { phoneNumber, otp });
-    return response.data;
+// Aliases for backwards compatibility
+export const sendPhoneOtpApi = async (phoneNumber) => {
+    return phoneLoginApi({ phoneNumber });
+};
+
+export const verifyPhoneOtpApi = async ({ phoneNumber }) => {
+    return phoneLoginApi({ phoneNumber });
 };
